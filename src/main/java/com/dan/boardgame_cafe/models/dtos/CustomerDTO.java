@@ -1,11 +1,12 @@
 package com.dan.boardgame_cafe.models.dtos;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import com.dan.boardgame_cafe.models.entities.Reservation;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class CustomerDTO {
@@ -24,13 +25,15 @@ public class CustomerDTO {
     private String nickname;
 
     @NotBlank(message = "an email is required")
-    @Email
+    @Email(message = "Email should be valid")
     private String email;
 
+    @Size(min = 10, max = 17, message = "number should have at least 10 or less than 17 digits")
     private String phoneNumber;
 
-
+    @NotNull(message = "Date of birth is required")
+    @Past
     private LocalDate dob;
 
-    private Integer age;
+    private List<Reservation> customerReservations = new ArrayList<>();
 }

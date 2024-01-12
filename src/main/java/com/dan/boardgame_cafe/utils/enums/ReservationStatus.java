@@ -1,5 +1,8 @@
 package com.dan.boardgame_cafe.utils.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum ReservationStatus {
 
     PENDING("Pending"),
