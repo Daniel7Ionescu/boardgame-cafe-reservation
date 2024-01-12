@@ -35,9 +35,6 @@ public class Customer {
     @Column (name = "date_of_birth", length = 50)
     private LocalDate dob;
 
-    @Column (name = "age")
-    private Integer age;
-
     @OneToMany(mappedBy = "customer")
     @JsonManagedReference
     private List<Reservation> customerReservations = new ArrayList<>();

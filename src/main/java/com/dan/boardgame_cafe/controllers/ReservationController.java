@@ -5,6 +5,8 @@ import com.dan.boardgame_cafe.services.reservation.ReservationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/reservations")
 public class ReservationController {
@@ -18,5 +20,10 @@ public class ReservationController {
     @PostMapping("/{customerId}")
     public ResponseEntity<ReservationDTO> createReservation(@RequestBody ReservationDTO reservationDTO, @PathVariable Long customerId){
         return ResponseEntity.ok(reservationService.createReservation(reservationDTO, customerId));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ReservationDTO>> getAllReservations(){
+        return ResponseEntity.ok(reservationService.getAllReservations());
     }
 }

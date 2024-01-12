@@ -15,14 +15,18 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
     private final ModelMapper modelMapper;
+    private final CustomerServiceValidation customerServiceValidation;
 
-    public CustomerServiceImpl(CustomerRepository customerRepository, ModelMapper modelMapper) {
+    public CustomerServiceImpl(CustomerRepository customerRepository, ModelMapper modelMapper, CustomerServiceValidation customerServiceValidation) {
         this.customerRepository = customerRepository;
         this.modelMapper = modelMapper;
+        this.customerServiceValidation = customerServiceValidation;
     }
 
     @Override
     public CustomerDTO createCustomer(CustomerDTO customerDTO) {
+        customerServiceValidation.validateCustomerCreation(customerDTO);
+
         Customer customer = modelMapper.map(customerDTO, Customer.class);
         Customer savedCustomer = customerRepository.save(customer);
         log.info("Customer {} : {} inserted", savedCustomer.getLastName(), savedCustomer.getId());
