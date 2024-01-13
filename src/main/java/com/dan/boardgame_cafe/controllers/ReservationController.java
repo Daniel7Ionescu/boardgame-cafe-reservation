@@ -1,7 +1,9 @@
 package com.dan.boardgame_cafe.controllers;
 
-import com.dan.boardgame_cafe.models.dtos.ReservationDTO;
+import com.dan.boardgame_cafe.models.dtos.reservation.ReservationCreateDTO;
+import com.dan.boardgame_cafe.models.dtos.reservation.ReservationDTO;
 import com.dan.boardgame_cafe.services.reservation.ReservationService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,9 +19,9 @@ public class ReservationController {
         this.reservationService = reservationService;
     }
 
-    @PostMapping("/{customerId}")
-    public ResponseEntity<ReservationDTO> createReservation(@RequestBody ReservationDTO reservationDTO, @PathVariable Long customerId){
-        return ResponseEntity.ok(reservationService.createReservation(reservationDTO, customerId));
+    @PostMapping
+    public ResponseEntity<ReservationCreateDTO> createReservation(@Valid @RequestBody ReservationCreateDTO reservationCreateDTO){
+        return ResponseEntity.ok(reservationService.createReservation(reservationCreateDTO));
     }
 
     @GetMapping

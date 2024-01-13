@@ -1,7 +1,8 @@
 package com.dan.boardgame_cafe.exceptions;
 
-import com.dan.boardgame_cafe.exceptions.customer.CustomerBelowMinimumAgeException;
-import com.dan.boardgame_cafe.exceptions.customer.CustomerEmailAlreadyExistsException;
+import com.dan.boardgame_cafe.exceptions.reservation.ReservationInvalidAgeException;
+import com.dan.boardgame_cafe.exceptions.reservation.ReservationMinimumDurationException;
+import com.dan.boardgame_cafe.exceptions.reservation.ReservationOutsideWorkingHoursException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -24,13 +25,18 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(CustomerBelowMinimumAgeException.class)
-    public ResponseEntity<Object> handleCustomerBelowMinimumAgeException(CustomerBelowMinimumAgeException e) {
+    @ExceptionHandler(ReservationInvalidAgeException.class)
+    public ResponseEntity<Object> handleReservationInvalidAgeException(ReservationInvalidAgeException e) {
         return getResponse(e, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(CustomerEmailAlreadyExistsException.class)
-    public ResponseEntity<Object> handleCustomerEmailAlreadyExistsException(CustomerEmailAlreadyExistsException e) {
+    @ExceptionHandler(ReservationOutsideWorkingHoursException.class)
+    public ResponseEntity<Object> handleReservationOutsideWorkingHoursException(ReservationOutsideWorkingHoursException e) {
+        return getResponse(e, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ReservationMinimumDurationException.class)
+    public ResponseEntity<Object> handleRReservationMinimumDurationException(ReservationMinimumDurationException e) {
         return getResponse(e, HttpStatus.BAD_REQUEST);
     }
 

@@ -1,42 +1,42 @@
 package com.dan.boardgame_cafe.services.reservation;
 
-import com.dan.boardgame_cafe.models.dtos.ReservationDTO;
-import com.dan.boardgame_cafe.models.entities.Customer;
+import com.dan.boardgame_cafe.models.dtos.reservation.ReservationCreateDTO;
+import com.dan.boardgame_cafe.models.dtos.reservation.ReservationDTO;
 import com.dan.boardgame_cafe.models.entities.Reservation;
 import com.dan.boardgame_cafe.repositories.ReservationRepository;
-import com.dan.boardgame_cafe.services.customer.CustomerService;
 import com.dan.boardgame_cafe.utils.enums.ReservationStatus;
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.util.List;
 
+@Slf4j
 @Service
 public class ReservationServiceImpl implements ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final ModelMapper modelMapper;
-    private final CustomerService customerService;
 
-    public ReservationServiceImpl(ReservationRepository reservationRepository, ModelMapper modelMapper, CustomerService customerService) {
+    private final ReservationValidationService reservationValidationService;
+
+    public ReservationServiceImpl(ReservationRepository reservationRepository, ModelMapper modelMapper, ReservationValidationService reservationValidationService) {
         this.reservationRepository = reservationRepository;
         this.modelMapper = modelMapper;
-        this.customerService = customerService;
+        this.reservationValidationService = reservationValidationService;
     }
 
+    @Transactional
     @Override
-    public ReservationDTO createReservation(ReservationDTO reservationDTO, Long customerId) {
-        //to do: validate reservation
-        //validate customer
-
-        Reservation reservation = modelMapper.map(reservationDTO, Reservation.class);
-        Customer customer = customerService.retrieveCustomerById(customerId);
-        reservation.setCustomer(customer);
+    public ReservationCreateDTO createReservation(ReservationCreateDTO reservationCreateDTO) {
+        reservationValidationService.validateReservationCreateDTO(reservationCreateDTO);
+        Reservation reservation = modelMapper.map(reservationCreateDTO, Reservation.class);
         reservation.setReservationStatus(ReservationStatus.PENDING);
         Reservation savedReservation = reservationRepository.save(reservation);
+        log.info("Reservation with id: {} saved in database", savedReservation.getId());
 
-        return modelMapper.map(savedReservation, ReservationDTO.class);
+        return modelMapper.map(savedReservation, ReservationCreateDTO.class);
     }
 
     @Override
