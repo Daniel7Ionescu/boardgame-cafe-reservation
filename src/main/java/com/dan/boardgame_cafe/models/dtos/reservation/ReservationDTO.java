@@ -32,13 +32,11 @@ public class ReservationDTO {
     @Future
     private LocalDateTime startTime;
 
-    private LocalDateTime endTime;
-
     @NotBlank
     @Min(value = 1, message = "at least 1 adult is required")
-    private Integer adults;
+    private Integer partySize;
 
-    private Integer children;
+    private Boolean hasChildren;
 
     private ReservationStatus reservationStatus;
 }

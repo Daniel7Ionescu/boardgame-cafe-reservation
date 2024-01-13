@@ -3,6 +3,7 @@ package com.dan.boardgame_cafe.services.reservation;
 import com.dan.boardgame_cafe.models.dtos.reservation.ReservationCreateDTO;
 import com.dan.boardgame_cafe.models.dtos.reservation.ReservationDTO;
 import com.dan.boardgame_cafe.models.entities.Reservation;
+import com.dan.boardgame_cafe.models.entities.Session;
 import com.dan.boardgame_cafe.repositories.ReservationRepository;
 import com.dan.boardgame_cafe.utils.enums.ReservationStatus;
 import jakarta.transaction.Transactional;
@@ -44,5 +45,24 @@ public class ReservationServiceImpl implements ReservationService {
         return reservationRepository.findAll().stream()
                 .map(reservation -> modelMapper.map(reservation, ReservationDTO.class))
                 .toList();
+    }
+
+    @Override
+    public ReservationDTO getReservationById(Long id) {
+        Reservation reservation = reservationRepository.findById(id).orElseThrow();
+
+        return modelMapper.map(reservation, ReservationDTO.class);
+    }
+
+    @Override
+    public void updatedReservationCreatedSession(Long id, Session session) {
+        Reservation reservation = reservationRepository.findById(id).orElseThrow();
+        reservation.setReservationStatus(ReservationStatus.APPROVED);
+        reservationRepository.save(reservation);
+    }
+
+    @Override
+    public Reservation retrieveReservationById(Long id) {
+        return reservationRepository.findById(id).orElseThrow();
     }
 }

@@ -2,11 +2,14 @@ package com.dan.boardgame_cafe.models.entities;
 
 import com.dan.boardgame_cafe.utils.enums.ReservationStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -32,15 +35,16 @@ public class Reservation {
     @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
 
-    @Column(name = "end_time")
-    private LocalDateTime endTime;
+    @Column(name = "party_size")
+    private Integer partySize;
 
-    @Column(name = "adults")
-    private Integer adults;
-
-    @Column(name = "children")
-    private Integer children;
+    @Column(name = "has_children")
+    private boolean hasChildren;
 
     @Column(name = "reservation_status")
     private ReservationStatus reservationStatus;
+
+    @ManyToMany(mappedBy = "reservations")
+    @JsonManagedReference
+    private List<Session> sessions = new ArrayList<>();
 }
