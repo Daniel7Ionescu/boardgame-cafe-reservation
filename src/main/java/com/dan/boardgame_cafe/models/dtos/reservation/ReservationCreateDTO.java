@@ -29,13 +29,9 @@ public class ReservationCreateDTO {
     @Future
     private LocalDateTime startTime;
 
-    @NotNull(message = "End time is required")
-    @Future
-    private LocalDateTime endTime;
-
     @NotNull
-    @Min(value = 1, message = "at least 1 adult is required")
-    private Integer adults;
+    @Min(value = 1, message = "at least 1 party member is required")
+    private Integer partySize;
 
-    private Integer children;
+    private Boolean hasChildren;
 }
