@@ -25,7 +25,7 @@ public class ReservationController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ReservationDTO>> getAllReservations(){
-        return ResponseEntity.ok(reservationService.getAllReservations());
+    public ResponseEntity<List<ReservationDTO>> getAllReservations(@RequestParam(required = false, name = "firstName") String firstNameLike ){
+        return ResponseEntity.ok(reservationService.getAllReservations(firstNameLike));
     }
 }

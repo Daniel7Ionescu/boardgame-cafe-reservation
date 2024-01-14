@@ -9,7 +9,10 @@ import com.dan.boardgame_cafe.utils.enums.ReservationStatus;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import static com.dan.boardgame_cafe.utils.specifications.ReservationSpecification.firstNameLike;
 
 import java.util.List;
 
@@ -40,9 +43,20 @@ public class ReservationServiceImpl implements ReservationService {
         return modelMapper.map(savedReservation, ReservationCreateDTO.class);
     }
 
+//    @Override
+//    public List<ReservationDTO> getAllReservations() {
+//        return reservationRepository.findAll().stream()
+//                .map(reservation -> modelMapper.map(reservation, ReservationDTO.class))
+//                .toList();
+//    }
+
     @Override
-    public List<ReservationDTO> getAllReservations() {
-        return reservationRepository.findAll().stream()
+    public List<ReservationDTO> getAllReservations(String firstNameLikeFilter) {
+        Specification<Reservation> resFilters = Specification.where(
+                firstNameLikeFilter == null ? null : firstNameLike(firstNameLikeFilter)
+        );
+
+        return reservationRepository.findAll(resFilters).stream()
                 .map(reservation -> modelMapper.map(reservation, ReservationDTO.class))
                 .toList();
     }
