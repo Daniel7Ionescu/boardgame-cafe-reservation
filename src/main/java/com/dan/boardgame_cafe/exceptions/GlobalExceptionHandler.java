@@ -1,5 +1,6 @@
 package com.dan.boardgame_cafe.exceptions;
 
+import com.dan.boardgame_cafe.exceptions.game.DuplicateGameException;
 import com.dan.boardgame_cafe.exceptions.reservation.ReservationInvalidAgeException;
 import com.dan.boardgame_cafe.exceptions.reservation.ReservationMinimumDurationException;
 import com.dan.boardgame_cafe.exceptions.reservation.ReservationOutsideWorkingHoursException;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +38,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ReservationMinimumDurationException.class)
-    public ResponseEntity<Object> handleRReservationMinimumDurationException(ReservationMinimumDurationException e) {
+    public ResponseEntity<Object> handleReservationMinimumDurationException(ReservationMinimumDurationException e) {
+        return getResponse(e, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DuplicateGameException.class)
+    public ResponseEntity<Object> handleDuplicateGameException(DuplicateGameException e) {
         return getResponse(e, HttpStatus.BAD_REQUEST);
     }
 

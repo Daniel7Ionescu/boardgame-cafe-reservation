@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class SessionConstants {
-
+    //try to keep them in a text file
     public static final Integer MINIMUM_AGE = 16;
     public static final Integer MAXIMUM_AGE = 90;
     public static final String OPENING_HOURS = "11:00";

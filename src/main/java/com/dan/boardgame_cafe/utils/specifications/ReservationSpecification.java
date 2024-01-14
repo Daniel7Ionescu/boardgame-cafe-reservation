@@ -6,15 +6,17 @@ import org.springframework.data.jpa.domain.Specification;
 
 public class ReservationSpecification {
 
-    private ReservationSpecification(){}
-
-    public static Specification<Reservation> lastNameLike(String lastName) {
-        return (root, query, builder) -> builder.
-                like(root.get("lastName"), "%" + lastName + "%");
+    private ReservationSpecification() {
     }
 
-    public static Specification<Reservation> hasReservationStatus(ReservationStatus reservationStatus){
+    public static Specification<Reservation> lastNameLike(String lastName) {
         return (root, query, builder) -> builder
-                .equal(root.get("reservationStatus"),reservationStatus.getReservationStatusLabel());
+                .like(root.get("lastName"), "%" + lastName + "%");
+
+    }
+
+    public static Specification<Reservation> hasReservationStatus(ReservationStatus reservationStatus) {
+        return (root, query, builder) -> builder
+                .equal(root.get("reservationStatus"), reservationStatus.getReservationStatusLabel());
     }
 }
