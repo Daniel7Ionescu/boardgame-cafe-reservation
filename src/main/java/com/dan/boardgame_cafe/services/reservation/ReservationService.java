@@ -10,7 +10,7 @@ import java.util.List;
 public interface ReservationService {
 
     ReservationCreateDTO createReservation(ReservationCreateDTO reservationCreateDTO);
-    List<ReservationDTO> getAllReservations();
+    List<ReservationDTO> getAllReservations(String firstNameLikeFilter);
 
     ReservationDTO getReservationById(Long id);
     Reservation retrieveReservationById(Long id);
