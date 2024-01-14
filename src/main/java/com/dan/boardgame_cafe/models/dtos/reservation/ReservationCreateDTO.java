@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Data
 public class ReservationCreateDTO {
@@ -25,9 +26,12 @@ public class ReservationCreateDTO {
     @Past
     private LocalDate dob;
 
-    @NotNull(message = "Starting time is required")
+    @NotNull(message = "Reservation date is required")
     @Future
-    private LocalDateTime startTime;
+    private LocalDate reservationDate;
+
+    @NotNull(message = "Start time is required")
+    private LocalTime reservationStart;
 
     @NotNull
     @Min(value = 1, message = "at least 1 party member is required")

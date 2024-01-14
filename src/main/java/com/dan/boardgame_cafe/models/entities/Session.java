@@ -5,7 +5,8 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,17 +22,20 @@ public class Session {
     @Column(name = "session_name", nullable = false)
     private String sessionName;
 
-    @Column(name = "session_start_time", nullable = false)
-    private LocalDateTime sessionStartTime;
+    @Column(name = "session_date", nullable = false)
+    private LocalDate sessionDate;
 
-    @Column(name = "session_end_time")
-    private LocalDateTime sessionEndTime;
+    @Column(name = "session_start", nullable = false)
+    private LocalTime sessionStart;
 
-    @Column(name = "party_size")
+    @Column(name = "session_end", nullable = false)
+    private LocalTime sessionEnd;
+
+    @Column(name = "party_size", nullable = false)
     private Integer partySize;
 
     @Column(name = "session_children")
-    private Integer sessionChildren;
+    private Boolean hasChildren;
 
     @ManyToMany
     @JoinTable(name = "reservation_session",

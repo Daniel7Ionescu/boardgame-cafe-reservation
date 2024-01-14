@@ -1,12 +1,15 @@
 package com.dan.boardgame_cafe.models.dtos.session;
 
 import com.dan.boardgame_cafe.models.entities.Reservation;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,17 +21,20 @@ public class SessionDTO {
     @NotBlank
     private String sessionName;
 
-    @NotNull
-    private LocalDateTime sessionStartTime;
+    @NotBlank
+    private LocalDate sessionDate;
 
-    @NotNull
-    private LocalDateTime sessionEndTime;
+    @NotBlank
+    private LocalTime sessionStart;
+
+    @NotBlank
+    private LocalTime sessionEnd;
 
     @NotNull
     @Min(value = 1)
     private Integer partySize;
 
-    private Integer sessionChildren;
+    private Boolean sessionChildren;
 
     private List<Reservation> reservations;
 }

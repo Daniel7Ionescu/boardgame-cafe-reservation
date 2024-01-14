@@ -8,6 +8,7 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,8 +33,11 @@ public class Reservation {
     @Column (name = "date_of_birth", length = 50)
     private LocalDate dob;
 
-    @Column(name = "start_time", nullable = false)
-    private LocalDateTime startTime;
+    @Column(name = "reservation_date", nullable = false)
+    private LocalDate reservationDate;
+
+    @Column(name = "reservation_start", nullable = false)
+    private LocalTime reservationStart;
 
     @Column(name = "party_size")
     private Integer partySize;
