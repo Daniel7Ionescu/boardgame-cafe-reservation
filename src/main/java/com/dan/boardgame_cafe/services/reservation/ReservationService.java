@@ -4,13 +4,14 @@ import com.dan.boardgame_cafe.models.dtos.reservation.ReservationCreateDTO;
 import com.dan.boardgame_cafe.models.dtos.reservation.ReservationDTO;
 import com.dan.boardgame_cafe.models.entities.Reservation;
 import com.dan.boardgame_cafe.models.entities.Session;
+import com.dan.boardgame_cafe.utils.enums.ReservationStatus;
 
 import java.util.List;
 
 public interface ReservationService {
 
     ReservationCreateDTO createReservation(ReservationCreateDTO reservationCreateDTO);
-    List<ReservationDTO> getAllReservations(String firstNameLikeFilter);
+    List<ReservationDTO> getAllReservations(String lastName, ReservationStatus reservationStatus);
 
     ReservationDTO getReservationById(Long id);
     Reservation retrieveReservationById(Long id);

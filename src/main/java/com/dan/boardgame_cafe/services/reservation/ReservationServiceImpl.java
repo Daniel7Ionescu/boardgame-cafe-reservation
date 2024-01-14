@@ -12,7 +12,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import static com.dan.boardgame_cafe.utils.specifications.ReservationSpecification.firstNameLike;
+import static com.dan.boardgame_cafe.utils.specifications.ReservationSpecification.lastNameLike;
+import static com.dan.boardgame_cafe.utils.specifications.ReservationSpecification.hasReservationStatus;
 
 import java.util.List;
 
@@ -43,20 +44,14 @@ public class ReservationServiceImpl implements ReservationService {
         return modelMapper.map(savedReservation, ReservationCreateDTO.class);
     }
 
-//    @Override
-//    public List<ReservationDTO> getAllReservations() {
-//        return reservationRepository.findAll().stream()
-//                .map(reservation -> modelMapper.map(reservation, ReservationDTO.class))
-//                .toList();
-//    }
-
     @Override
-    public List<ReservationDTO> getAllReservations(String firstNameLikeFilter) {
-        Specification<Reservation> resFilters = Specification.where(
-                firstNameLikeFilter == null ? null : firstNameLike(firstNameLikeFilter)
-        );
+    public List<ReservationDTO> getAllReservations(String lastName, ReservationStatus reservationStatus) {
+        Specification<Reservation> resFilter = Specification
+                .where(lastName == null ? null : lastNameLike(lastName)
+                .and(reservationStatus == null ? null : hasReservationStatus(reservationStatus))
+                );
 
-        return reservationRepository.findAll(resFilters).stream()
+        return reservationRepository.findAll(resFilter).stream()
                 .map(reservation -> modelMapper.map(reservation, ReservationDTO.class))
                 .toList();
     }
