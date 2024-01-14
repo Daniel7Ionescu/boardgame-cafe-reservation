@@ -5,6 +5,10 @@ import com.dan.boardgame_cafe.services.session.SessionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/sessions")
 public class SessionController {
@@ -16,7 +20,13 @@ public class SessionController {
     }
 
     @PostMapping("/from-reservation/{reservationId}")
-    public ResponseEntity<SessionDTO> createSessionFromReservation(@PathVariable Long reservationId){
+    public ResponseEntity<SessionDTO> createSessionFromReservation(@PathVariable Long reservationId) {
         return ResponseEntity.ok(sessionService.createSessionFromReservation(reservationId));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<SessionDTO>> getAllSessions(@RequestParam(required = false) Integer minPlayers,
+                                                           @RequestParam(required = false) LocalDate localDate) {
+        return ResponseEntity.ok(sessionService.getAllSessions(minPlayers, localDate));
     }
 }

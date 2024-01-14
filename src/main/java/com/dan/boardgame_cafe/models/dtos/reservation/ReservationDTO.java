@@ -1,11 +1,13 @@
 package com.dan.boardgame_cafe.models.dtos.reservation;
 
 import com.dan.boardgame_cafe.utils.enums.ReservationStatus;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Data
 public class ReservationDTO {
@@ -28,9 +30,12 @@ public class ReservationDTO {
     @Past
     private LocalDate dob;
 
-    @NotBlank(message = "Starting time is required")
+    @NotNull(message = "Reservation date is required")
     @Future
-    private LocalDateTime startTime;
+    private LocalDate reservationDate;
+
+    @NotNull(message = "Start time is required")
+    private LocalTime reservationStart;
 
     @NotBlank
     @Min(value = 1, message = "at least 1 adult is required")

@@ -9,13 +9,18 @@ import com.dan.boardgame_cafe.services.reservation.ReservationService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.dan.boardgame_cafe.utils.constants.SessionConstants.*;
+import static com.dan.boardgame_cafe.utils.specifications.SessionSpecification.*;
 
 @Slf4j
 @Service
@@ -30,6 +35,17 @@ public class SessionServiceImpl implements SessionService{
         this.sessionRepository = sessionRepository;
         this.modelMapper = modelMapper;
         this.reservationService = reservationService;
+    }
+
+    @Override
+    public List<SessionDTO> getAllSessions(Integer minPlayers, LocalDate localDate) {
+        Specification<Session> sessionFilter = Specification
+                .where(minPlayers == null ? null : partySizeFilter(minPlayers))
+                .and(localDate== null ? null : isSessionOnDate(localDate));
+
+        return sessionRepository.findAll(sessionFilter).stream()
+                .map(session -> modelMapper.map(session, SessionDTO.class))
+                .toList();
     }
 
     @Transactional
@@ -49,9 +65,10 @@ public class SessionServiceImpl implements SessionService{
     private Session buildSessionFromReservation(Reservation reservation){
         Session session = new Session();
         session.setSessionName(reservation.getFirstName() + " " +
-                LocalTime.from(reservation.getStartTime()));
-        session.setSessionStartTime(reservation.getStartTime());
-        session.setSessionEndTime(reservation.getStartTime().plusMinutes(MINIMUM_SESSION_MINUTES));
+                LocalTime.from(reservation.getReservationStart()));
+        session.setSessionDate(reservation.getReservationDate());
+        session.setSessionStart(reservation.getReservationStart());
+        session.setSessionEnd(reservation.getReservationStart().plusMinutes(MINIMUM_SESSION_MINUTES));
         session.setPartySize(reservation.getPartySize());
         session.getReservations().add(reservation);
 
