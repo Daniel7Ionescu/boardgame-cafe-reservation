@@ -38,9 +38,16 @@ public class Session {
     private Boolean hasChildren;
 
     @ManyToMany
-    @JoinTable(name = "reservation_session",
+    @JoinTable(name = "reservations_sessions",
             joinColumns = @JoinColumn(name = "reservation_id"),
             inverseJoinColumns = @JoinColumn(name = "session_id"))
     @JsonBackReference
     private List<Reservation> reservations = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(name = "games_sessions",
+            joinColumns = @JoinColumn(name = "game_id"),
+            inverseJoinColumns = @JoinColumn(name = "session_id"))
+    @JsonBackReference
+    private List<Game> games = new ArrayList<>();
 }

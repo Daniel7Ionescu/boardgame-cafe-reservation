@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 @Converter(autoApply = true)
 public class ReservationStatusConverter implements AttributeConverter<ReservationStatus, String> {
+
     @Override
     public String convertToDatabaseColumn(ReservationStatus attribute) {
         if(attribute == null){
