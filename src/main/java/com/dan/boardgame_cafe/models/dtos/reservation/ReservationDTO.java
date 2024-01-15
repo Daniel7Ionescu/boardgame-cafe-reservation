@@ -1,13 +1,13 @@
 package com.dan.boardgame_cafe.models.dtos.reservation;
 
 import com.dan.boardgame_cafe.utils.enums.ReservationStatus;
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
+
+import static com.dan.boardgame_cafe.utils.constants.BusinessConstants.VALID_NAME_REGEX;
 
 @Data
 public class ReservationDTO {
@@ -16,10 +16,12 @@ public class ReservationDTO {
 
     @NotBlank(message = "First name is required")
     @Size(min = 3, max = 50, message = "Invalid Name")
+    @Pattern(regexp = VALID_NAME_REGEX, message = "Invalid characters")
     private String firstName;
 
     @NotBlank(message = "Last name is required")
     @Size(min = 3, max = 50, message = "Invalid Name")
+    @Pattern(regexp = VALID_NAME_REGEX, message = "Invalid characters")
     private String lastName;
 
     @NotBlank(message = "An email is required")
@@ -37,11 +39,11 @@ public class ReservationDTO {
     @NotNull(message = "Start time is required")
     private LocalTime reservationStart;
 
-    @NotBlank
-    @Min(value = 1, message = "at least 1 adult is required")
+    private ReservationStatus reservationStatus;
+
+    @NotNull
+    @Min(value = 1, message = "at least 1 party member is required")
     private Integer partySize;
 
     private Boolean hasChildren;
-
-    private ReservationStatus reservationStatus;
 }

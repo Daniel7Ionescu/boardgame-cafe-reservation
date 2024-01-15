@@ -1,5 +1,6 @@
 package com.dan.boardgame_cafe.services.game;
 
+import com.dan.boardgame_cafe.exceptions.ResourceNotFoundException;
 import com.dan.boardgame_cafe.models.dtos.game.GameDTO;
 import com.dan.boardgame_cafe.models.entities.Game;
 import com.dan.boardgame_cafe.repositories.GameRepository;
@@ -39,5 +40,10 @@ public class GameServiceImpl implements GameService{
         return gameRepository.findAll().stream()
                 .map(game -> modelMapper.map(game, GameDTO.class))
                 .toList();
+    }
+
+    @Override
+    public Game retrieveGameById(Long id) {
+        return gameRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Game with id: " + id + " not found"));
     }
 }

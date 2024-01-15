@@ -1,13 +1,14 @@
 package com.dan.boardgame_cafe.controllers;
 
-import com.dan.boardgame_cafe.models.dtos.reservation.ReservationCreateDTO;
 import com.dan.boardgame_cafe.models.dtos.reservation.ReservationDTO;
+import com.dan.boardgame_cafe.models.dtos.reservation.ReservationDetailDTO;
 import com.dan.boardgame_cafe.services.reservation.ReservationService;
 import com.dan.boardgame_cafe.utils.enums.ReservationStatus;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -21,13 +22,19 @@ public class ReservationController {
     }
 
     @PostMapping
-    public ResponseEntity<ReservationCreateDTO> createReservation(@Valid @RequestBody ReservationCreateDTO reservationCreateDTO) {
-        return ResponseEntity.ok(reservationService.createReservation(reservationCreateDTO));
+    public ResponseEntity<ReservationDTO> createReservation(@Valid @RequestBody ReservationDTO reservationDTO) {
+        return ResponseEntity.ok(reservationService.createReservation(reservationDTO));
     }
 
     @GetMapping
     public ResponseEntity<List<ReservationDTO>> getAllReservations(@RequestParam(required = false) String lastName,
-                                                                   @RequestParam(required = false) ReservationStatus reservationStatus) {
-        return ResponseEntity.ok(reservationService.getAllReservations(lastName, reservationStatus));
+                                                                   @RequestParam(required = false) ReservationStatus reservationStatus,
+                                                                   @RequestParam(required = false) LocalDate localDate) {
+        return ResponseEntity.ok(reservationService.getAllReservations(lastName, reservationStatus, localDate));
+    }
+
+    @GetMapping("/{reservationId}")
+    public ResponseEntity<ReservationDetailDTO> getReservationById(@PathVariable Long reservationId) {
+        return ResponseEntity.ok(reservationService.getReservationById(reservationId));
     }
 }

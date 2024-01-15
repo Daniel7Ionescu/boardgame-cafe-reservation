@@ -4,19 +4,16 @@ import com.dan.boardgame_cafe.models.entities.Game;
 import com.dan.boardgame_cafe.models.entities.Reservation;
 import com.dan.boardgame_cafe.utils.enums.SessionStatus;
 import com.dan.boardgame_cafe.utils.enums.SessionType;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class SessionDTO {
+public class SessionDetailDTO {
 
     private Long id;
 
@@ -43,4 +40,13 @@ public class SessionDTO {
     private SessionType sessionType;
 
     private Boolean sessionChildren;
+
+    @NotNull
+    @DecimalMin(value = "0.0", inclusive = false)
+    @Digits(integer=3, fraction=2)
+    private BigDecimal sessionCost;
+
+    private List<Reservation> reservations;
+
+    private List<Game> games;
 }

@@ -1,7 +1,8 @@
 package com.dan.boardgame_cafe.services.reservation;
 
-import com.dan.boardgame_cafe.models.dtos.reservation.ReservationCreateDTO;
+import com.dan.boardgame_cafe.exceptions.ResourceNotFoundException;
 import com.dan.boardgame_cafe.models.dtos.reservation.ReservationDTO;
+import com.dan.boardgame_cafe.models.dtos.reservation.ReservationDetailDTO;
 import com.dan.boardgame_cafe.models.entities.Reservation;
 import com.dan.boardgame_cafe.models.entities.Session;
 import com.dan.boardgame_cafe.repositories.ReservationRepository;
@@ -12,9 +13,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import static com.dan.boardgame_cafe.utils.specifications.ReservationSpecification.lastNameLike;
-import static com.dan.boardgame_cafe.utils.specifications.ReservationSpecification.hasReservationStatus;
+import static com.dan.boardgame_cafe.utils.specifications.ReservationSpecification.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -34,22 +35,22 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Transactional
     @Override
-    public ReservationCreateDTO createReservation(ReservationCreateDTO reservationCreateDTO) {
-        reservationValidationService.validateReservationCreateDTO(reservationCreateDTO);
-        Reservation reservation = modelMapper.map(reservationCreateDTO, Reservation.class);
+    public ReservationDTO createReservation(ReservationDTO reservationDTO) {
+        reservationValidationService.validateReservationDTO(reservationDTO);
+        Reservation reservation = modelMapper.map(reservationDTO, Reservation.class);
         reservation.setReservationStatus(ReservationStatus.PENDING);
         Reservation savedReservation = reservationRepository.save(reservation);
         log.info("Reservation with id: {} saved in database", savedReservation.getId());
 
-        return modelMapper.map(savedReservation, ReservationCreateDTO.class);
+        return modelMapper.map(savedReservation, ReservationDTO.class);
     }
 
     @Override
-    public List<ReservationDTO> getAllReservations(String lastName, ReservationStatus reservationStatus) {
+    public List<ReservationDTO> getAllReservations(String lastName, ReservationStatus reservationStatus, LocalDate localDate) {
         Specification<Reservation> resFilter = Specification
-                .where(lastName == null ? null : lastNameLike(lastName)
+                .where(lastName == null ? null : lastNameLike(lastName))
                 .and(reservationStatus == null ? null : hasReservationStatus(reservationStatus))
-                );
+                .and(localDate == null ? null : reservationOnDate(localDate));
 
         return reservationRepository.findAll(resFilter).stream()
                 .map(reservation -> modelMapper.map(reservation, ReservationDTO.class))
@@ -57,21 +58,32 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public ReservationDTO getReservationById(Long id) {
-        Reservation reservation = reservationRepository.findById(id).orElseThrow();
-
-        return modelMapper.map(reservation, ReservationDTO.class);
+    public ReservationDetailDTO getReservationById(Long id) {
+        return modelMapper.map(retrieveReservationById(id), ReservationDetailDTO.class);
     }
 
     @Override
-    public void updatedReservationCreatedSession(Long id, Session session) {
-        Reservation reservation = reservationRepository.findById(id).orElseThrow();
+    public void updateReservationCreatedSession(Long reservationId, Session session) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Reservation with id: " + reservationId + " not found"));
         reservation.setReservationStatus(ReservationStatus.APPROVED);
-        reservationRepository.save(reservation);
+
+        Reservation savedReservation = reservationRepository.save(reservation);
+        log.info("Reservation id: {} status updated to {} and saved in DB", savedReservation.getId(), savedReservation.getReservationStatus());
     }
 
     @Override
     public Reservation retrieveReservationById(Long id) {
-        return reservationRepository.findById(id).orElseThrow();
+        return reservationRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Reservation with id: " + id + " not found"));
+    }
+
+    @Override
+    public Reservation retrieveReservationByIdWithValidStatusForSessionCreate(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(
+                () -> new ResourceNotFoundException("Reservation with id: " + reservationId + " not found"));
+        reservationValidationService.validateReservationStatus(reservation.getReservationStatus(), ReservationStatus.PENDING);
+
+        return reservation;
     }
 }
