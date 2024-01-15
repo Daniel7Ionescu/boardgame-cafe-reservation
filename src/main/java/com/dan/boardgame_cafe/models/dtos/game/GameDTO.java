@@ -1,11 +1,10 @@
 package com.dan.boardgame_cafe.models.dtos.game;
 
 import com.dan.boardgame_cafe.utils.enums.GameCategory;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
+
+import static com.dan.boardgame_cafe.utils.constants.BusinessConstants.VALID_GAME_NAME_REGEX;
 
 @Data
 public class GameDTO {
@@ -14,6 +13,7 @@ public class GameDTO {
 
     @NotBlank(message = "A name is required")
     @Size(min = 3, max = 50, message = "Invalid name length")
+    @Pattern(regexp = VALID_GAME_NAME_REGEX, message = "Invalid characters")
     private String gameName;
 
     @NotNull(message = "Minimum players number is required")

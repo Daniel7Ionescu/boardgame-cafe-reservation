@@ -1,10 +1,13 @@
 package com.dan.boardgame_cafe.models.entities;
 
+import com.dan.boardgame_cafe.utils.enums.SessionStatus;
+import com.dan.boardgame_cafe.utils.enums.SessionType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -37,6 +40,15 @@ public class Session {
     @Column(name = "session_children")
     private Boolean hasChildren;
 
+    @Column(name = "session_status", nullable = false)
+    private SessionStatus sessionStatus;
+
+    @Column(name = "session_type", nullable = false)
+    private SessionType sessionType;
+
+    @Column(name = "session_cost")
+    private BigDecimal sessionCost;
+
     @ManyToMany
     @JoinTable(name = "reservations_sessions",
             joinColumns = @JoinColumn(name = "reservation_id"),
@@ -48,6 +60,6 @@ public class Session {
     @JoinTable(name = "games_sessions",
             joinColumns = @JoinColumn(name = "game_id"),
             inverseJoinColumns = @JoinColumn(name = "session_id"))
-    @JsonBackReference
+    @JsonManagedReference
     private List<Game> games = new ArrayList<>();
 }

@@ -1,6 +1,7 @@
 package com.dan.boardgame_cafe.controllers;
 
 import com.dan.boardgame_cafe.models.dtos.session.SessionDTO;
+import com.dan.boardgame_cafe.models.dtos.session.SessionDetailDTO;
 import com.dan.boardgame_cafe.services.session.SessionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,5 +29,15 @@ public class SessionController {
     public ResponseEntity<List<SessionDTO>> getAllSessions(@RequestParam(required = false) Integer minPlayers,
                                                            @RequestParam(required = false) LocalDate localDate) {
         return ResponseEntity.ok(sessionService.getAllSessions(minPlayers, localDate));
+    }
+
+    @GetMapping("/{sessionId}")
+    public ResponseEntity<SessionDetailDTO> getSessionById(@PathVariable Long sessionId){
+        return ResponseEntity.ok(sessionService.getSessionById(sessionId));
+    }
+
+    @PutMapping("/{sessionId}/games/{gameId}")
+    public ResponseEntity<SessionDetailDTO> addGameToSession(@PathVariable Long sessionId, @PathVariable Long gameId){
+        return ResponseEntity.ok(sessionService.addGameToSession(sessionId, gameId));
     }
 }

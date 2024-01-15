@@ -1,26 +1,35 @@
 package com.dan.boardgame_cafe.services.reservation;
 
+import com.dan.boardgame_cafe.exceptions.ResourceHasInvalidStatusException;
 import com.dan.boardgame_cafe.exceptions.reservation.ReservationInvalidAgeException;
 import com.dan.boardgame_cafe.exceptions.reservation.ReservationOutsideWorkingHoursException;
-import com.dan.boardgame_cafe.models.dtos.reservation.ReservationCreateDTO;
+import com.dan.boardgame_cafe.models.dtos.reservation.ReservationDTO;
+import com.dan.boardgame_cafe.utils.enums.ReservationStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Period;
 
-import static com.dan.boardgame_cafe.utils.constants.SessionConstants.*;
+import static com.dan.boardgame_cafe.utils.constants.BusinessConstants.*;
 
 @Service
 public class ReservationValidationServiceImpl implements ReservationValidationService{
 
     @Override
-    public void validateReservationCreateDTO(ReservationCreateDTO reservationCreateDTO) {
+    public void validateReservationDTO(ReservationDTO reservationDTO) {
         LocalDate dateNow = LocalDate.now();
-        Integer customerAge = Period.between(reservationCreateDTO.getDob(), dateNow).getYears();
+        Integer customerAge = Period.between(reservationDTO.getDob(), dateNow).getYears();
 
         validateReservationCreatorIsOfAge(customerAge);
-        validateReservationTime(reservationCreateDTO.getReservationStart());
+        validateReservationTime(reservationDTO.getReservationStart());
+    }
+
+    @Override
+    public void validateReservationStatus(ReservationStatus inputStatus, ReservationStatus validStatus) {
+        if(!inputStatus.equals(validStatus)){
+            throw new ResourceHasInvalidStatusException("Reservation has invalid status");
+        }
     }
 
     private void validateReservationCreatorIsOfAge(Integer customerAge){

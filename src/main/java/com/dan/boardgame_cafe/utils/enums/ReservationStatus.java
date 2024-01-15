@@ -1,10 +1,10 @@
 package com.dan.boardgame_cafe.utils.enums;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 @Getter
 public enum ReservationStatus {
-
     PENDING("Pending"),
     APPROVED("Accepted"),
     REJECTED("Rejected"),

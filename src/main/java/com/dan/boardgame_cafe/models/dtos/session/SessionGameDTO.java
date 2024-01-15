@@ -10,13 +10,11 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class SessionDTO {
+public class SessionGameDTO {
 
     private Long id;
 
@@ -43,4 +41,8 @@ public class SessionDTO {
     private SessionType sessionType;
 
     private Boolean sessionChildren;
+
+    private List<Reservation> reservations;
+
+    private List<Game> games;
 }
