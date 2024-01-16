@@ -2,6 +2,7 @@ package com.dan.boardgame_cafe.controllers;
 
 import com.dan.boardgame_cafe.models.dtos.game.GameDTO;
 import com.dan.boardgame_cafe.services.game.GameService;
+import com.dan.boardgame_cafe.utils.enums.GameCategory;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,8 +25,10 @@ public class GameController {
     }
 
     @GetMapping
-    public ResponseEntity<List<GameDTO>> geAllGames(){
-        return ResponseEntity.ok(gameService.getAllGames());
+    public ResponseEntity<List<GameDTO>> geAllGames(@RequestParam(required = false) String inputName,
+                                                    @RequestParam(required = false) GameCategory gameCategory,
+                                                    @RequestParam(required = false) Integer minPlayers) {
+        return ResponseEntity.ok(gameService.getAllGames(inputName, gameCategory, minPlayers));
     }
 
 }

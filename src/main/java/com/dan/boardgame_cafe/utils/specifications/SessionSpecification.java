@@ -18,11 +18,4 @@ public class SessionSpecification {
         return ((root, query, builder) -> builder
                 .equal(root.get("sessionDate"), localDate));
     }
-
-    public static Specification<Session> sessionToday() {
-        return ((root, query, builder) -> {
-            LocalDate dateToday = LocalDate.now();
-            return builder.equal(root.get("sessionDate"), dateToday);
-        });
-    }
 }
