@@ -37,4 +37,10 @@ public class ReservationController {
     public ResponseEntity<ReservationDetailDTO> getReservationById(@PathVariable Long reservationId) {
         return ResponseEntity.ok(reservationService.getReservationById(reservationId));
     }
+
+    @PutMapping("/{reservationId}/{gameTableId}")
+    public ResponseEntity<ReservationDetailDTO> acceptReservation(@PathVariable Long reservationId,
+                                                                  @PathVariable Long gameTableId){
+        return ResponseEntity.ok(reservationService.acceptReservation(reservationId, gameTableId));
+    }
 }
