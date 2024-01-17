@@ -22,7 +22,7 @@ public class ReservationValidationServiceImpl implements ReservationValidationSe
         Integer customerAge = Period.between(reservationDTO.getDob(), dateNow).getYears();
 
         validateReservationCreatorIsOfAge(customerAge);
-        validateReservationTime(reservationDTO.getReservationStart());
+        validateReservationTime(reservationDTO.getReservationStartTime());
     }
 
     @Override

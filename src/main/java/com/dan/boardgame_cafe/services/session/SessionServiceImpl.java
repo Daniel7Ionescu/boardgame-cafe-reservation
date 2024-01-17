@@ -5,12 +5,11 @@ import com.dan.boardgame_cafe.models.dtos.session.SessionDTO;
 import com.dan.boardgame_cafe.models.dtos.session.SessionDetailDTO;
 import com.dan.boardgame_cafe.models.entities.Game;
 import com.dan.boardgame_cafe.models.entities.Reservation;
-import com.dan.boardgame_cafe.models.entities.Session;
+import com.dan.boardgame_cafe.models.entities.GameSession;
 import com.dan.boardgame_cafe.repositories.SessionRepository;
 import com.dan.boardgame_cafe.services.game.GameService;
 import com.dan.boardgame_cafe.services.reservation.ReservationService;
-import com.dan.boardgame_cafe.utils.enums.SessionStatus;
-import com.dan.boardgame_cafe.utils.enums.SessionType;
+import com.dan.boardgame_cafe.utils.enums.GameSessionStatus;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -18,10 +17,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
-import static com.dan.boardgame_cafe.utils.constants.BusinessConstants.*;
 import static com.dan.boardgame_cafe.utils.specifications.SessionSpecification.*;
 
 @Slf4j
@@ -43,7 +40,7 @@ public class SessionServiceImpl implements SessionService{
 
     @Override
     public List<SessionDTO> getAllSessions(Integer minPlayers, LocalDate localDate) {
-        Specification<Session> sessionFilter = Specification
+        Specification<GameSession> sessionFilter = Specification
                 .where(minPlayers == null ? null : partySizeFilter(minPlayers))
                 .and(localDate== null ? null : isSessionOnDate(localDate));
 
@@ -61,44 +58,42 @@ public class SessionServiceImpl implements SessionService{
     @Override
     public SessionDTO createSessionFromReservation(Long reservationId) {
         Reservation reservation = reservationService.retrieveReservationByIdWithValidStatusForSessionCreate(reservationId);
-        Session session = buildSessionFromReservation(reservation);
-        Session savedSession = sessionRepository.save(session);
-        log.info("Session id: {} saved in DB", savedSession.getId());
-        reservationService.updateReservationCreatedSession(reservationId, session);
+        GameSession gameSession = buildSessionFromReservation(reservation);
+        GameSession savedGameSession = sessionRepository.save(gameSession);
+        log.info("Session id: {} saved in DB", savedGameSession.getId());
+        reservationService.updatedReservationAfterGameSessionCreate(reservationId, savedGameSession);
 
-        return modelMapper.map(savedSession, SessionDTO.class);
+        return modelMapper.map(savedGameSession, SessionDTO.class);
     }
 
     @Transactional
     @Override
     public SessionDetailDTO addGameToSession(Long sessionId, Long gameId) {
-        Session session = sessionRepository.findById(sessionId).orElseThrow(
+        GameSession gameSession = sessionRepository.findById(sessionId).orElseThrow(
                 () -> new ResourceNotFoundException("Session with id: " + sessionId + " not found"));
         Game game = gameService.retrieveGameById(gameId);
-        session.getGames().add(game);
+        gameSession.getGames().add(game);
 //        session.getGames().add(gameService.retrieveGameById(gameId));
-        Session savedSession = sessionRepository.save(session);
-        log.info("Session id: {} has been added game id: {} and saved in DB", savedSession.getId(), gameId);
+        GameSession savedGameSession = sessionRepository.save(gameSession);
+        log.info("Session id: {} has been added game id: {} and saved in DB", savedGameSession.getId(), gameId);
 
-        return modelMapper.map(savedSession, SessionDetailDTO.class);
+        return modelMapper.map(savedGameSession, SessionDetailDTO.class);
     }
 
-    private Session buildSessionFromReservation(Reservation reservation){
-        Session session = new Session();
-        session.setSessionName(reservation.getFirstName() + " " +
-                LocalTime.from(reservation.getReservationStart()));
-        session.setSessionDate(reservation.getReservationDate());
-        session.setSessionStart(reservation.getReservationStart());
-        session.setSessionEnd(reservation.getReservationStart().plusMinutes(MINIMUM_SESSION_MINUTES));
-        session.setPartySize(reservation.getPartySize());
-        session.getReservations().add(reservation);
-        session.setSessionStatus(SessionStatus.READY);
-        session.setSessionType(SessionType.STANDARD);
+    private GameSession buildSessionFromReservation(Reservation reservation){
+        GameSession gameSession = new GameSession();
+        gameSession.setSessionDate(reservation.getReservationDate());
+        gameSession.setSessionStart(reservation.getReservationStartTime());
+        gameSession.setSessionEnd(reservation.getReservationEndTime());
+        gameSession.getReservations().add(reservation);
+        gameSession.setGameSessionStatus(GameSessionStatus.ACTIVE);
+        gameSession.setGameTable(reservation.getGameTable());
+        log.info("Session from Reservation successfully built");
 
-        return session;
+        return gameSession;
     }
 
-    private Session retrieveSessionById(Long sessionId){
+    private GameSession retrieveSessionById(Long sessionId){
         return sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Session with id: " + sessionId + " not found"));
     }

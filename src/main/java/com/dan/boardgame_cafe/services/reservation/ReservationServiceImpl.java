@@ -3,9 +3,11 @@ package com.dan.boardgame_cafe.services.reservation;
 import com.dan.boardgame_cafe.exceptions.ResourceNotFoundException;
 import com.dan.boardgame_cafe.models.dtos.reservation.ReservationDTO;
 import com.dan.boardgame_cafe.models.dtos.reservation.ReservationDetailDTO;
+import com.dan.boardgame_cafe.models.entities.GameSession;
+import com.dan.boardgame_cafe.models.entities.GameTable;
 import com.dan.boardgame_cafe.models.entities.Reservation;
-import com.dan.boardgame_cafe.models.entities.Session;
 import com.dan.boardgame_cafe.repositories.ReservationRepository;
+import com.dan.boardgame_cafe.services.game_table.GameTableService;
 import com.dan.boardgame_cafe.utils.enums.ReservationStatus;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -24,13 +26,14 @@ public class ReservationServiceImpl implements ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final ModelMapper modelMapper;
-
     private final ReservationValidationService reservationValidationService;
+    private final GameTableService gameTableService;
 
-    public ReservationServiceImpl(ReservationRepository reservationRepository, ModelMapper modelMapper, ReservationValidationService reservationValidationService) {
+    public ReservationServiceImpl(ReservationRepository reservationRepository, ModelMapper modelMapper, ReservationValidationService reservationValidationService, GameTableService gameTableService) {
         this.reservationRepository = reservationRepository;
         this.modelMapper = modelMapper;
         this.reservationValidationService = reservationValidationService;
+        this.gameTableService = gameTableService;
     }
 
     @Transactional
@@ -62,11 +65,23 @@ public class ReservationServiceImpl implements ReservationService {
         return modelMapper.map(retrieveReservationById(id), ReservationDetailDTO.class);
     }
 
+    @Transactional
     @Override
-    public void updateReservationCreatedSession(Long reservationId, Session session) {
-        Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new ResourceNotFoundException("Reservation with id: " + reservationId + " not found"));
-        reservation.setReservationStatus(ReservationStatus.APPROVED);
+    public ReservationDetailDTO acceptReservation(Long reservationId, Long gameTableId) {
+        Reservation reservation = retrieveReservationById(reservationId);
+        GameTable gameTable = gameTableService.retrieveGameTableThatCanAccommodateReservation(gameTableId, reservation);
+        reservation.setGameTable(gameTable);
+        reservation.setReservationStatus(ReservationStatus.ACCEPTED);
+        Reservation savedReservation = reservationRepository.save(reservation);
+
+        return modelMapper.map(savedReservation, ReservationDetailDTO.class);
+    }
+
+    @Override
+    public void updatedReservationAfterGameSessionCreate(Long reservationId, GameSession gameSession) {
+        Reservation reservation = retrieveReservationById(reservationId);
+        reservation.setReservationStatus(ReservationStatus.SERVICED);
+        reservation.setGameSession(gameSession);
 
         Reservation savedReservation = reservationRepository.save(reservation);
         log.info("Reservation id: {} status updated to {} and saved in DB", savedReservation.getId(), savedReservation.getReservationStatus());
@@ -80,9 +95,8 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public Reservation retrieveReservationByIdWithValidStatusForSessionCreate(Long reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(
-                () -> new ResourceNotFoundException("Reservation with id: " + reservationId + " not found"));
-        reservationValidationService.validateReservationStatus(reservation.getReservationStatus(), ReservationStatus.PENDING);
+        Reservation reservation = retrieveReservationById(reservationId);
+        reservationValidationService.validateReservationStatus(reservation.getReservationStatus(), ReservationStatus.ACCEPTED);
 
         return reservation;
     }

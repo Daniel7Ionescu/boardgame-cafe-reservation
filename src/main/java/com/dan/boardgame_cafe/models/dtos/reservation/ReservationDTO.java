@@ -37,7 +37,9 @@ public class ReservationDTO {
     private LocalDate reservationDate;
 
     @NotNull(message = "Start time is required")
-    private LocalTime reservationStart;
+    private LocalTime reservationStartTime;
+    @NotNull(message = "End time is required")
+    private LocalTime reservationEndTime;
 
     private ReservationStatus reservationStatus;
 

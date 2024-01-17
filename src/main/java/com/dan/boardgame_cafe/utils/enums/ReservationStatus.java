@@ -6,9 +6,10 @@ import lombok.Getter;
 @Getter
 public enum ReservationStatus {
     PENDING("Pending"),
-    APPROVED("Accepted"),
+    ACCEPTED("Accepted"),
+    SERVICED("Serviced"),
     REJECTED("Rejected"),
-    COULD_NOT_SERVICE("Could not service");
+    NO_SHOW("No-show");
 
     private final String reservationStatusLabel;
 

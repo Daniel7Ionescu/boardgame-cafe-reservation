@@ -7,7 +7,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +35,11 @@ public class Reservation {
     @Column(name = "reservation_date", nullable = false)
     private LocalDate reservationDate;
 
-    @Column(name = "reservation_start", nullable = false)
-    private LocalTime reservationStart;
+    @Column(name = "reservation_start_time", nullable = false)
+    private LocalTime reservationStartTime;
+
+    @Column(name = "reservation_end_time", nullable = false)
+    private LocalTime reservationEndTime;
 
     @Column(name = "party_size")
     private Integer partySize;
@@ -48,7 +50,12 @@ public class Reservation {
     @Column(name = "reservation_status")
     private ReservationStatus reservationStatus;
 
-    @ManyToMany(mappedBy = "reservations")
-    @JsonManagedReference
-    private List<Session> sessions = new ArrayList<>();
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "game_table_id")
+    private GameTable gameTable;
+
+    @ManyToOne
+    @JoinColumn(name = "session_id")
+    private GameSession gameSession;
 }

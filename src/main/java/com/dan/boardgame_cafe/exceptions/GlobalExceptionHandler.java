@@ -1,9 +1,7 @@
 package com.dan.boardgame_cafe.exceptions;
 
 import com.dan.boardgame_cafe.exceptions.game.DuplicateGameException;
-import com.dan.boardgame_cafe.exceptions.reservation.ReservationInvalidAgeException;
-import com.dan.boardgame_cafe.exceptions.reservation.ReservationMinimumDurationException;
-import com.dan.boardgame_cafe.exceptions.reservation.ReservationOutsideWorkingHoursException;
+import com.dan.boardgame_cafe.exceptions.reservation.*;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -76,6 +74,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ReservationMinimumDurationException.class)
     public ResponseEntity<Object> handleReservationMinimumDurationException(ReservationMinimumDurationException e) {
+        return getResponse(e, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ReservationPartySizeOverTableCapacityException.class)
+    public ResponseEntity<Object> handleReservationPartySizeOverTableCapacityException(ReservationPartySizeOverTableCapacityException e) {
+        return getResponse(e, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ResultingSessionOverlapsWithExistingException.class)
+    public ResponseEntity<Object> handleResultingSessionOverlapsWithExistingException(ResultingSessionOverlapsWithExistingException e) {
         return getResponse(e, HttpStatus.BAD_REQUEST);
     }
 

@@ -2,7 +2,6 @@ package com.dan.boardgame_cafe.models.entities;
 
 import com.dan.boardgame_cafe.utils.enums.GameCategory;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -35,5 +34,5 @@ public class Game {
 
     @ManyToMany(mappedBy = "games")
     @JsonBackReference
-    private List<Session> sessions = new ArrayList<>();
+    private List<GameSession> gameSessions = new ArrayList<>();
 }
