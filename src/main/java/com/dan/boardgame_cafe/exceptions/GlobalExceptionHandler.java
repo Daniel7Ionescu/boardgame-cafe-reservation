@@ -1,6 +1,7 @@
 package com.dan.boardgame_cafe.exceptions;
 
 import com.dan.boardgame_cafe.exceptions.game.DuplicateGameException;
+import com.dan.boardgame_cafe.exceptions.game.GameAlreadyInGameSessionException;
 import com.dan.boardgame_cafe.exceptions.reservation.*;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -93,6 +94,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DuplicateGameException.class)
     public ResponseEntity<Object> handleDuplicateGameException(DuplicateGameException e) {
+        return getResponse(e, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(GameAlreadyInGameSessionException.class)
+    public ResponseEntity<Object> handleGameAlreadyInGameSessionException(GameAlreadyInGameSessionException e) {
         return getResponse(e, HttpStatus.BAD_REQUEST);
     }
 

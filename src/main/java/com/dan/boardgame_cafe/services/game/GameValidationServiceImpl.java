@@ -1,7 +1,10 @@
 package com.dan.boardgame_cafe.services.game;
 
 import com.dan.boardgame_cafe.exceptions.game.DuplicateGameException;
+import com.dan.boardgame_cafe.exceptions.game.GameAlreadyInGameSessionException;
 import com.dan.boardgame_cafe.models.dtos.game.GameDTO;
+import com.dan.boardgame_cafe.models.entities.Game;
+import com.dan.boardgame_cafe.models.entities.GameSession;
 import com.dan.boardgame_cafe.repositories.GameRepository;
 import org.springframework.stereotype.Service;
 

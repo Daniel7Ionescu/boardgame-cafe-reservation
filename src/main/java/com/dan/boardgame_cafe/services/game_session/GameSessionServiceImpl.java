@@ -2,6 +2,7 @@ package com.dan.boardgame_cafe.services.game_session;
 
 import com.dan.boardgame_cafe.exceptions.ResourceHasInvalidStatusOrTypeException;
 import com.dan.boardgame_cafe.exceptions.ResourceNotFoundException;
+import com.dan.boardgame_cafe.exceptions.game.GameAlreadyInGameSessionException;
 import com.dan.boardgame_cafe.models.dtos.game_session.GameSessionDTO;
 import com.dan.boardgame_cafe.models.dtos.game_session.GameSessionDetailDTO;
 import com.dan.boardgame_cafe.models.entities.Game;
@@ -30,15 +31,16 @@ public class GameSessionServiceImpl implements GameSessionService {
 
     private final GameSessionRepository gameSessionRepository;
     private final ModelMapper modelMapper;
-
     private final ReservationService reservationService;
     private final GameService gameService;
+    private final GameSessionValidationService gameSessionValidationService;
 
-    public GameSessionServiceImpl(GameSessionRepository gameSessionRepository, ModelMapper modelMapper, ReservationService reservationService, GameService gameService) {
+    public GameSessionServiceImpl(GameSessionRepository gameSessionRepository, ModelMapper modelMapper, ReservationService reservationService, GameService gameService, GameSessionValidationService gameSessionValidationService) {
         this.gameSessionRepository = gameSessionRepository;
         this.modelMapper = modelMapper;
         this.reservationService = reservationService;
         this.gameService = gameService;
+        this.gameSessionValidationService = gameSessionValidationService;
     }
 
     @Override
@@ -69,19 +71,13 @@ public class GameSessionServiceImpl implements GameSessionService {
         return modelMapper.map(savedGameSession, GameSessionDTO.class);
     }
 
-    public GameSessionDTO createEventGameSessionFromReservation(Long gameSessionId, Long reservationId){
-        reservationService.retrieveReservationById(reservationId);
-        return  null;
-    }
-
     @Transactional
     @Override
-    public GameSessionDetailDTO addGameToSession(Long sessionId, Long gameId) {
-        GameSession gameSession = gameSessionRepository.findById(sessionId).orElseThrow(
-                () -> new ResourceNotFoundException("Session with id: " + sessionId + " not found"));
+    public GameSessionDetailDTO addGameToSession(Long gameSessionId, Long gameId) {
+        GameSession gameSession = retrieveGameSessionById(gameSessionId);
         Game game = gameService.retrieveGameById(gameId);
+        gameSessionValidationService.validateGameSessionCanAddGame(gameSession, game);
         gameSession.getGames().add(game);
-//        session.getGames().add(gameService.retrieveGameById(gameId));
         GameSession savedGameSession = gameSessionRepository.save(gameSession);
         log.info("Session id: {} has been added game id: {} and saved in DB", savedGameSession.getId(), gameId);
 
@@ -91,6 +87,9 @@ public class GameSessionServiceImpl implements GameSessionService {
     @Override
     public GameSessionDetailDTO endGameSession(Long gameSessionId) {
         GameSession gameSession = retrieveGameSessionById(gameSessionId);
+        if(!gameSession.getGameSessionStatus().equals(GameSessionStatus.ACTIVE)){
+            throw new ResourceHasInvalidStatusOrTypeException("Game Session id: " + gameSession.getId() + " has invalid status");
+        }
         gameSession.setGameSessionStatus(GameSessionStatus.ENDED);
         GameSession savedGameSession = gameSessionRepository.save(gameSession);
         log.info("Game session id: {} status set to: {}", savedGameSession.getId(), savedGameSession.getGameSessionStatus());
