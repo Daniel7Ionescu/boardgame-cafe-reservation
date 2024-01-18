@@ -29,9 +29,6 @@ public class Game {
     @Column(name = "game_category")
     private GameCategory gameCategory;
 
-    @Column(name = "complexity")
-    private Double complexity;
-
     @ManyToMany(mappedBy = "games")
     @JsonBackReference
     private List<GameSession> gameSessions = new ArrayList<>();

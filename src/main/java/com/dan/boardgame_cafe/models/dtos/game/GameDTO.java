@@ -25,6 +25,4 @@ public class GameDTO {
 
     @NotNull(message = "Game category is required")
     private GameCategory gameCategory;
-
-    private Double complexity;
 }
