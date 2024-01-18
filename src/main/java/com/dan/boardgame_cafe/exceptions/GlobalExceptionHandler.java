@@ -39,7 +39,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Object> handleResourceNotFoundException(HttpMessageNotReadableException e) {
+    public ResponseEntity<Object> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         Map<String, String> result = new HashMap<>();
         result.put("message", "Invalid Enum");
 
