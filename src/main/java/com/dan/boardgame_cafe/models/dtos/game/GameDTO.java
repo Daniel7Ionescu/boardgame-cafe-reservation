@@ -2,10 +2,16 @@ package com.dan.boardgame_cafe.models.dtos.game;
 
 import com.dan.boardgame_cafe.utils.enums.GameCategory;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import static com.dan.boardgame_cafe.utils.constants.BusinessConstants.VALID_GAME_NAME_REGEX;
 
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class GameDTO {
 
