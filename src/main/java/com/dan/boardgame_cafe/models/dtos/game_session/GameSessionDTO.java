@@ -1,7 +1,7 @@
-package com.dan.boardgame_cafe.models.dtos.session;
+package com.dan.boardgame_cafe.models.dtos.game_session;
 
 import com.dan.boardgame_cafe.utils.enums.GameSessionStatus;
-import com.dan.boardgame_cafe.utils.enums.SessionType;
+import com.dan.boardgame_cafe.utils.enums.GameSessionType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Data
-public class SessionDTO {
+public class GameSessionDTO {
 
     private Long id;
 
@@ -27,15 +27,9 @@ public class SessionDTO {
     @NotBlank
     private LocalTime sessionEnd;
 
-    @NotNull
-    @Min(value = 1)
-    private Integer partySize;
-
     @NotNull(message = "Session Status is required")
     private GameSessionStatus gameSessionStatus;
 
     @NotNull(message = "Session Type is required")
-    private SessionType sessionType;
-
-    private Boolean sessionChildren;
+    private GameSessionType gameSessionType;
 }

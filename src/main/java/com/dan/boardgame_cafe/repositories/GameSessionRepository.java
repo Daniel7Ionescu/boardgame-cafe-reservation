@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface SessionRepository extends JpaRepository<GameSession, Long>, JpaSpecificationExecutor<GameSession> {
+public interface GameSessionRepository extends JpaRepository<GameSession, Long>, JpaSpecificationExecutor<GameSession> {
 }
