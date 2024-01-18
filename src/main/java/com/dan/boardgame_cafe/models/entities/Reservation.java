@@ -1,6 +1,7 @@
 package com.dan.boardgame_cafe.models.entities;
 
 import com.dan.boardgame_cafe.utils.enums.ReservationStatus;
+import com.dan.boardgame_cafe.utils.enums.ReservationType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -44,11 +45,11 @@ public class Reservation {
     @Column(name = "party_size")
     private Integer partySize;
 
-    @Column(name = "has_children")
-    private boolean hasChildren;
-
     @Column(name = "reservation_status")
     private ReservationStatus reservationStatus;
+
+    @Column(name = "reservation_type")
+    private ReservationType reservationType;
 
     @JsonBackReference
     @ManyToOne

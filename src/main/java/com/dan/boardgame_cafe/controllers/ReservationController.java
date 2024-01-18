@@ -2,6 +2,7 @@ package com.dan.boardgame_cafe.controllers;
 
 import com.dan.boardgame_cafe.models.dtos.reservation.ReservationDTO;
 import com.dan.boardgame_cafe.models.dtos.reservation.ReservationDetailDTO;
+import com.dan.boardgame_cafe.models.dtos.reservation.ReservationJoinDTO;
 import com.dan.boardgame_cafe.services.reservation.ReservationService;
 import com.dan.boardgame_cafe.utils.enums.ReservationStatus;
 import jakarta.validation.Valid;
@@ -26,6 +27,18 @@ public class ReservationController {
         return ResponseEntity.ok(reservationService.createReservation(reservationDTO));
     }
 
+    @PostMapping("/{eventId}/join")
+    public ResponseEntity<ReservationJoinDTO> createReservationJoinEvent(@RequestBody ReservationJoinDTO reservationJoinDTO,
+                                                                         @PathVariable Long eventId){
+        return ResponseEntity.ok(reservationService.createReservationJoinEvent(reservationJoinDTO, eventId));
+    }
+
+    @PutMapping("/{eventId}/join/{reservationJoinId}")
+    public ResponseEntity<ReservationDetailDTO> acceptJoinReservation(@PathVariable Long eventId,
+                                                                      @PathVariable Long reservationJoinId){
+        return ResponseEntity.ok(reservationService.acceptJoinReservation(reservationJoinId, eventId));
+    }
+
     @GetMapping
     public ResponseEntity<List<ReservationDTO>> getAllReservations(@RequestParam(required = false) String lastName,
                                                                    @RequestParam(required = false) ReservationStatus reservationStatus,
@@ -41,6 +54,6 @@ public class ReservationController {
     @PutMapping("/{reservationId}/{gameTableId}")
     public ResponseEntity<ReservationDetailDTO> acceptReservation(@PathVariable Long reservationId,
                                                                   @PathVariable Long gameTableId){
-        return ResponseEntity.ok(reservationService.acceptReservation(reservationId, gameTableId));
+        return ResponseEntity.ok(reservationService.acceptStandardReservation(reservationId, gameTableId));
     }
 }

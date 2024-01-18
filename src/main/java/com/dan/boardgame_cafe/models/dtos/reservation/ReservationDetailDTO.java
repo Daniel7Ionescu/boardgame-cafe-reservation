@@ -2,6 +2,7 @@ package com.dan.boardgame_cafe.models.dtos.reservation;
 
 import com.dan.boardgame_cafe.models.entities.GameSession;
 import com.dan.boardgame_cafe.utils.enums.ReservationStatus;
+import com.dan.boardgame_cafe.utils.enums.ReservationType;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
@@ -36,6 +37,7 @@ public class ReservationDetailDTO {
 
     @NotNull(message = "Start time is required")
     private LocalTime reservationStart;
+
     @NotNull(message = "End time is required")
     private LocalTime reservationEndTime;
 
@@ -43,10 +45,11 @@ public class ReservationDetailDTO {
     @Min(value = 1, message = "at least 1 adult is required")
     private Integer partySize;
 
-    private Boolean hasChildren;
-
     @NotNull(message = "Reservation status is required")
     private ReservationStatus reservationStatus;
 
-    private List<GameSession> gameSessions;
+    @NotNull(message = "Reservation type is required")
+    private ReservationType reservationType;
+
+    private GameSession gameSession;
 }

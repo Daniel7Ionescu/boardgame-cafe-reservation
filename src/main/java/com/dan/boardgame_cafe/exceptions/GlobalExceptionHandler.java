@@ -11,7 +11,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.sql.SQLException;
 import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,8 +46,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(ResourceHasInvalidStatusException.class)
-    public ResponseEntity<Object> handleResourceHasInvalidStatusException(ResourceHasInvalidStatusException e) {
+    @ExceptionHandler(ResourceHasInvalidStatusOrTypeException.class)
+    public ResponseEntity<Object> handleResourceHasInvalidStatusException(ResourceHasInvalidStatusOrTypeException e) {
         return getResponse(e, HttpStatus.BAD_REQUEST);
     }
 
@@ -60,6 +59,11 @@ public class GlobalExceptionHandler {
                 .findFirst());
 
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DuplicateReservationException.class)
+    public ResponseEntity<Object> handleDuplicateReservationException(DuplicateReservationException e) {
+        return getResponse(e, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ReservationInvalidAgeException.class)
@@ -82,8 +86,8 @@ public class GlobalExceptionHandler {
         return getResponse(e, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(ResultingSessionOverlapsWithExistingException.class)
-    public ResponseEntity<Object> handleResultingSessionOverlapsWithExistingException(ResultingSessionOverlapsWithExistingException e) {
+    @ExceptionHandler(ReservationTimeOverlapsWithExistingSessionException.class)
+    public ResponseEntity<Object> handleResultingSessionOverlapsWithExistingException(ReservationTimeOverlapsWithExistingSessionException e) {
         return getResponse(e, HttpStatus.BAD_REQUEST);
     }
 

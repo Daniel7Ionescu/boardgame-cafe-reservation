@@ -1,13 +1,12 @@
 package com.dan.boardgame_cafe.models.entities;
 
 import com.dan.boardgame_cafe.utils.enums.GameSessionStatus;
-import com.dan.boardgame_cafe.utils.enums.SessionType;
+import com.dan.boardgame_cafe.utils.enums.GameSessionType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -15,7 +14,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "sessions")
+@Table(name = "game_sessions")
 public class GameSession {
 
     @Id
@@ -33,6 +32,9 @@ public class GameSession {
 
     @Column(name = "session_status", nullable = false)
     private GameSessionStatus gameSessionStatus;
+
+    @Column(name = "session_type", nullable = false)
+    private GameSessionType gameSessionType;
 
     @OneToMany(mappedBy = "gameSession")
     @JsonBackReference

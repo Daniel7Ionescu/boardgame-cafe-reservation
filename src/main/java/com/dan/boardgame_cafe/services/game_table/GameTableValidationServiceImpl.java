@@ -1,9 +1,11 @@
 package com.dan.boardgame_cafe.services.game_table;
 
 import com.dan.boardgame_cafe.exceptions.reservation.ReservationPartySizeOverTableCapacityException;
-import com.dan.boardgame_cafe.exceptions.reservation.ResultingSessionOverlapsWithExistingException;
+import com.dan.boardgame_cafe.exceptions.reservation.ReservationTimeOverlapsWithExistingSessionException;
+import com.dan.boardgame_cafe.models.entities.GameSession;
 import com.dan.boardgame_cafe.models.entities.GameTable;
 import com.dan.boardgame_cafe.models.entities.Reservation;
+import com.dan.boardgame_cafe.utils.enums.ReservationStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
@@ -19,6 +21,7 @@ public class GameTableValidationServiceImpl implements GameTableValidationServic
 
         long result = gameTable.getReservations().stream()
                 .filter(reservation -> reservation.getReservationDate().equals(inputRes.getReservationDate()))
+                .filter(reservation -> reservation.getReservationStatus().equals(ReservationStatus.ACCEPTED))
                 .filter(reservation -> doTimesOverlap(
                         reservation.getReservationStartTime(),
                         reservation.getReservationEndTime(),
@@ -28,7 +31,7 @@ public class GameTableValidationServiceImpl implements GameTableValidationServic
                 .count();
 
         if (result > 0) {
-            throw new ResultingSessionOverlapsWithExistingException("Resulting Session will overlap");
+            throw new ReservationTimeOverlapsWithExistingSessionException("Resulting Session will overlap");
         }
     }
 
