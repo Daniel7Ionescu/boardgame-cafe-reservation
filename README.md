@@ -9,5 +9,3 @@ A Spring Boot web app serving APIs for a reservation system for board game café
 ---
 ### Info
 diagrams: https://drive.google.com/file/d/1lBfHBJPt9TiT8PnjeSQq9PEthRiXHUIb/view?usp=sharing 
-
-trello: https://trello.com/b/ywOjKO18/board-game-cafe-reservation
