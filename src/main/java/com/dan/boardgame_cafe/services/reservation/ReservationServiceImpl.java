@@ -80,7 +80,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public List<ReservationDTO> getAllReservations(String lastName, ReservationStatus reservationStatus, LocalDate localDate) {
+    public List<ReservationDTO> getFilteredReservations(String lastName, ReservationStatus reservationStatus, LocalDate localDate) {
         Specification<Reservation> resFilter = Specification
                 .where(lastName == null ? null : lastNameLike(lastName))
                 .and(reservationStatus == null ? null : hasReservationStatus(reservationStatus))

@@ -36,18 +36,18 @@ public class GameSession {
     @Column(name = "session_type", nullable = false)
     private GameSessionType gameSessionType;
 
-    @OneToMany(mappedBy = "gameSession")
     @JsonBackReference
+    @OneToMany(mappedBy = "gameSession")
     private List<Reservation> reservations = new ArrayList<>();
 
     @JsonBackReference(value = "gameSessionsReference")
     @ManyToOne
     private GameTable gameTable;
 
+    @JsonManagedReference
     @ManyToMany
     @JoinTable(name = "games_played_in_sessions",
             joinColumns = @JoinColumn(name = "game_id"),
             inverseJoinColumns = @JoinColumn(name = "session_id"))
-    @JsonManagedReference
     private List<Game> games = new ArrayList<>();
 }

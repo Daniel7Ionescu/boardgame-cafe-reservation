@@ -9,6 +9,6 @@ import java.util.List;
 public interface GameService {
 
     GameDTO createGame(GameDTO gameDTO);
-    List<GameDTO> getAllGames(String inputName, GameCategory gameCategory, Integer minPlayers);
-    Game retrieveGameById(Long id);
+    List<GameDTO> getFilteredGames(String inputName, GameCategory gameCategory, Integer minPlayers);
+    Game getGameById(Long id);
 }

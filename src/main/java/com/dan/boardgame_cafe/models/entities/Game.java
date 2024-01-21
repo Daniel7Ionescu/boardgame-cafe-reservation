@@ -32,10 +32,10 @@ public class Game {
     @Column(name = "max_players", nullable = false)
     private Integer maxPlayers;
 
-    @Column(name = "game_category")
+    @Column(name = "game_category", nullable = false)
     private GameCategory gameCategory;
 
-    @ManyToMany(mappedBy = "games")
     @JsonBackReference
+    @ManyToMany(mappedBy = "games")
     private List<GameSession> gameSessions = new ArrayList<>();
 }

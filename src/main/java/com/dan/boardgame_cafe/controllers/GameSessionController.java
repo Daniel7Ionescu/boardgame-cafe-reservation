@@ -25,9 +25,9 @@ public class GameSessionController {
     }
 
     @GetMapping
-    public ResponseEntity<List<GameSessionDTO>> getAllSessions(@RequestParam(required = false) Integer minPlayers,
+    public ResponseEntity<List<GameSessionDTO>> getFilteredSessions(@RequestParam(required = false) Integer minPlayers,
                                                                @RequestParam(required = false) LocalDate localDate) {
-        return ResponseEntity.ok(gameSessionService.getAllSessions(minPlayers, localDate));
+        return ResponseEntity.ok(gameSessionService.getFilteredSessions(minPlayers, localDate));
     }
 
     @GetMapping("/{gameSessionId}")

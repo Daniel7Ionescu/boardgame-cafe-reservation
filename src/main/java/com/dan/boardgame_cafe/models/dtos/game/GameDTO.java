@@ -27,6 +27,8 @@ public class GameDTO {
     private Integer minPlayers;
 
     @NotNull(message = "Maximum players number is required")
+    @Min(value = 2, message = "Needs at least 2 players")
+    @Max(value = 8, message = "This ain't football bro")
     private Integer maxPlayers;
 
     @NotNull(message = "Game category is required")

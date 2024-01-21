@@ -2,7 +2,6 @@ package com.dan.boardgame_cafe.services.game_session;
 
 import com.dan.boardgame_cafe.exceptions.ResourceHasInvalidStatusOrTypeException;
 import com.dan.boardgame_cafe.exceptions.ResourceNotFoundException;
-import com.dan.boardgame_cafe.exceptions.game.GameAlreadyInGameSessionException;
 import com.dan.boardgame_cafe.models.dtos.game_session.GameSessionDTO;
 import com.dan.boardgame_cafe.models.dtos.game_session.GameSessionDetailDTO;
 import com.dan.boardgame_cafe.models.entities.Game;
@@ -44,7 +43,7 @@ public class GameSessionServiceImpl implements GameSessionService {
     }
 
     @Override
-    public List<GameSessionDTO> getAllSessions(Integer minPlayers, LocalDate localDate) {
+    public List<GameSessionDTO> getFilteredSessions(Integer minPlayers, LocalDate localDate) {
         Specification<GameSession> sessionFilter = Specification
                 .where(minPlayers == null ? null : partySizeFilter(minPlayers))
                 .and(localDate== null ? null : isSessionOnDate(localDate));
@@ -75,7 +74,7 @@ public class GameSessionServiceImpl implements GameSessionService {
     @Override
     public GameSessionDetailDTO addGameToSession(Long gameSessionId, Long gameId) {
         GameSession gameSession = retrieveGameSessionById(gameSessionId);
-        Game game = gameService.retrieveGameById(gameId);
+        Game game = gameService.getGameById(gameId);
         gameSessionValidationService.validateGameSessionCanAddGame(gameSession, game);
         gameSession.getGames().add(game);
         GameSession savedGameSession = gameSessionRepository.save(gameSession);

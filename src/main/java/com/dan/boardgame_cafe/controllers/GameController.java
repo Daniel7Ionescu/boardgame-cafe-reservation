@@ -5,10 +5,12 @@ import com.dan.boardgame_cafe.services.game.GameService;
 import com.dan.boardgame_cafe.utils.enums.GameCategory;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("/api/games")
 public class GameController {
@@ -20,15 +22,15 @@ public class GameController {
     }
 
     @PostMapping
-    public ResponseEntity<GameDTO> createGame(@Valid @RequestBody GameDTO gameDTO) {
+    public ResponseEntity<GameDTO> createGame(@RequestBody @Valid GameDTO gameDTO) {
         return ResponseEntity.ok(gameService.createGame(gameDTO));
     }
 
     @GetMapping
-    public ResponseEntity<List<GameDTO>> geAllGames(@RequestParam(required = false) String inputName,
-                                                    @RequestParam(required = false) GameCategory gameCategory,
-                                                    @RequestParam(required = false) Integer minPlayers) {
-        return ResponseEntity.ok(gameService.getAllGames(inputName, gameCategory, minPlayers));
+    public ResponseEntity<List<GameDTO>> geFilteredGames(@RequestParam(required = false) String inputName,
+                                                         @RequestParam(required = false) GameCategory gameCategory,
+                                                         @RequestParam(required = false) Integer minPlayers) {
+        return ResponseEntity.ok(gameService.getFilteredGames(inputName, gameCategory, minPlayers));
     }
 
 }
