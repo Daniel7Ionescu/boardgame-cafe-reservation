@@ -16,4 +16,6 @@ public class BusinessConstants {
     public static final String VALID_NAME_REGEX = "^[a-zA-Z]+$";
     public static final String VALID_GAME_NAME_REGEX = "^[a-zA-Z0-9 ]+$";
     public static final String VALID_DATE_FORMAT = "^((19|2[0-9])[0-9]{2})-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$";
+
+    public static final String CHATGPT_SYSTEM_INSTRUCTION = "Please answer using up to 50 tokens.";
 }
