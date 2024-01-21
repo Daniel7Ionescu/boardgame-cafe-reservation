@@ -23,27 +23,27 @@ public class ReservationController {
     }
 
     @PostMapping
-    public ResponseEntity<ReservationDTO> createReservation(@Valid @RequestBody ReservationDTO reservationDTO) {
+    public ResponseEntity<ReservationDTO> createReservation(@RequestBody @Valid ReservationDTO reservationDTO) {
         return ResponseEntity.ok(reservationService.createReservation(reservationDTO));
     }
 
     @PostMapping("/{eventId}/join")
-    public ResponseEntity<ReservationJoinDTO> createReservationJoinEvent(@RequestBody ReservationJoinDTO reservationJoinDTO,
-                                                                         @PathVariable Long eventId){
+    public ResponseEntity<ReservationJoinDTO> createReservationJoinEvent(@RequestBody @Valid ReservationJoinDTO reservationJoinDTO,
+                                                                         @PathVariable Long eventId) {
         return ResponseEntity.ok(reservationService.createReservationJoinEvent(reservationJoinDTO, eventId));
     }
 
     @PutMapping("/{eventId}/join/{reservationJoinId}")
     public ResponseEntity<ReservationDetailDTO> acceptJoinReservation(@PathVariable Long eventId,
-                                                                      @PathVariable Long reservationJoinId){
+                                                                      @PathVariable Long reservationJoinId) {
         return ResponseEntity.ok(reservationService.acceptJoinReservation(reservationJoinId, eventId));
     }
 
     @GetMapping
-    public ResponseEntity<List<ReservationDTO>> getAllReservations(@RequestParam(required = false) String lastName,
-                                                                   @RequestParam(required = false) ReservationStatus reservationStatus,
-                                                                   @RequestParam(required = false) LocalDate localDate) {
-        return ResponseEntity.ok(reservationService.getAllReservations(lastName, reservationStatus, localDate));
+    public ResponseEntity<List<ReservationDTO>> getFilteredReservations(@RequestParam(required = false) String lastName,
+                                                                        @RequestParam(required = false) ReservationStatus reservationStatus,
+                                                                        @RequestParam(required = false) LocalDate localDate) {
+        return ResponseEntity.ok(reservationService.getFilteredReservations(lastName, reservationStatus, localDate));
     }
 
     @GetMapping("/{reservationId}")
@@ -53,7 +53,7 @@ public class ReservationController {
 
     @PutMapping("/{reservationId}/{gameTableId}")
     public ResponseEntity<ReservationDetailDTO> acceptReservation(@PathVariable Long reservationId,
-                                                                  @PathVariable Long gameTableId){
+                                                                  @PathVariable Long gameTableId) {
         return ResponseEntity.ok(reservationService.acceptStandardReservation(reservationId, gameTableId));
     }
 }

@@ -9,7 +9,7 @@ import java.util.List;
 public interface GameSessionService {
 
     GameSessionDTO createSessionFromReservation(Long reservationId);
-    List<GameSessionDTO> getAllSessions(Integer minPlayers, LocalDate localDate);
+    List<GameSessionDTO> getFilteredSessions(Integer minPlayers, LocalDate localDate);
     GameSessionDetailDTO getSessionById(Long gameSessionId);
     GameSessionDetailDTO addGameToSession(Long gameSessionId, Long gameId);
     GameSessionDetailDTO endGameSession(Long gameSessionId);

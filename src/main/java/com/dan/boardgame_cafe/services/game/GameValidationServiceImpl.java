@@ -1,10 +1,7 @@
 package com.dan.boardgame_cafe.services.game;
 
 import com.dan.boardgame_cafe.exceptions.game.DuplicateGameException;
-import com.dan.boardgame_cafe.exceptions.game.GameAlreadyInGameSessionException;
 import com.dan.boardgame_cafe.models.dtos.game.GameDTO;
-import com.dan.boardgame_cafe.models.entities.Game;
-import com.dan.boardgame_cafe.models.entities.GameSession;
 import com.dan.boardgame_cafe.repositories.GameRepository;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +17,6 @@ public class GameValidationServiceImpl implements GameValidationService{
     @Override
     public void validateUniqueGameName(GameDTO gameDTO) {
         long result = gameRepository.countByGameName(gameDTO.getGameName());
-        System.out.println("Count: " + result);
         if(result > 0){
             throw new DuplicateGameException("A game with that name already exists");
         }

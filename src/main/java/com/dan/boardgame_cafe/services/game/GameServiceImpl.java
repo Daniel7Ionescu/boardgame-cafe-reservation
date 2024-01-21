@@ -40,7 +40,7 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public List<GameDTO> getAllGames(String inputName, GameCategory gameCategory, Integer minPlayers) {
+    public List<GameDTO> getFilteredGames(String inputName, GameCategory gameCategory, Integer minPlayers) {
         Specification<Game> gameFilter = Specification
                 .where(inputName == null ? null : gameNameLike(inputName))
                 .and(gameCategory == null ? null : hasGameCategory(gameCategory))
@@ -52,7 +52,7 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public Game retrieveGameById(Long id) {
+    public Game getGameById(Long id) {
         return gameRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Game with id: " + id + " not found"));
     }
 }
