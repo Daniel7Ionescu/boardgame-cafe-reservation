@@ -19,6 +19,7 @@ public class ChatGPTController {
 
     @PostMapping
     public ResponseEntity<String> askAIOverlord(@RequestBody String prompt){
-        return ResponseEntity.ok(chatGPTService.webClientChatWithAI(prompt));
+//        return ResponseEntity.ok(chatGPTService.webClientChatWithAI(prompt));
+        return ResponseEntity.ok(chatGPTService.restTemplateChatWithAi(prompt));
     }
 }

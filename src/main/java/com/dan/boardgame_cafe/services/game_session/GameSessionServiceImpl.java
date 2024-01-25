@@ -8,6 +8,7 @@ import com.dan.boardgame_cafe.models.entities.Game;
 import com.dan.boardgame_cafe.models.entities.Reservation;
 import com.dan.boardgame_cafe.models.entities.GameSession;
 import com.dan.boardgame_cafe.repositories.GameSessionRepository;
+import com.dan.boardgame_cafe.services.email.EmailService;
 import com.dan.boardgame_cafe.services.game.GameService;
 import com.dan.boardgame_cafe.services.reservation.ReservationService;
 import com.dan.boardgame_cafe.utils.enums.GameSessionStatus;
@@ -34,7 +35,11 @@ public class GameSessionServiceImpl implements GameSessionService {
     private final GameService gameService;
     private final GameSessionValidationService gameSessionValidationService;
 
-    public GameSessionServiceImpl(GameSessionRepository gameSessionRepository, ModelMapper modelMapper, ReservationService reservationService, GameService gameService, GameSessionValidationService gameSessionValidationService) {
+    public GameSessionServiceImpl(GameSessionRepository gameSessionRepository,
+                                  ModelMapper modelMapper,
+                                  ReservationService reservationService,
+                                  GameService gameService,
+                                  GameSessionValidationService gameSessionValidationService) {
         this.gameSessionRepository = gameSessionRepository;
         this.modelMapper = modelMapper;
         this.reservationService = reservationService;
@@ -58,6 +63,11 @@ public class GameSessionServiceImpl implements GameSessionService {
         return modelMapper.map(retrieveGameSessionById(sessionId), GameSessionDetailDTO.class);
     }
 
+    /**
+     * Creates a GameSession entity from an existing Reservation
+     * @param reservationId the Reservation with status ACCEPTED
+     * @return dto of the saved GameSession
+     */
     @Transactional
     @Override
     public GameSessionDTO createSessionFromReservation(Long reservationId) {
@@ -74,11 +84,11 @@ public class GameSessionServiceImpl implements GameSessionService {
     @Override
     public GameSessionDetailDTO addGameToSession(Long gameSessionId, Long gameId) {
         GameSession gameSession = retrieveGameSessionById(gameSessionId);
-        Game game = gameService.getGameById(gameId);
+        Game game = gameService.retrieveGameById(gameId);
         gameSessionValidationService.validateGameSessionCanAddGame(gameSession, game);
         gameSession.getGames().add(game);
         GameSession savedGameSession = gameSessionRepository.save(gameSession);
-        log.info("Session id: {} has been added game id: {} and saved in DB", savedGameSession.getId(), gameId);
+        log.info("Session id: {} has added game id: {} and saved in DB", savedGameSession.getId(), gameId);
 
         return modelMapper.map(savedGameSession, GameSessionDetailDTO.class);
     }
