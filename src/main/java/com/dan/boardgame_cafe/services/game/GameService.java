@@ -10,5 +10,7 @@ public interface GameService {
 
     GameDTO createGame(GameDTO gameDTO);
     List<GameDTO> getFilteredGames(String inputName, GameCategory gameCategory, Integer minPlayers);
-    Game getGameById(Long id);
+    GameDTO getGameById(Long gameId);
+    void deleteGame(Long gameId);
+    Game retrieveGameById(Long gameId);
 }

@@ -8,6 +8,7 @@ import com.dan.boardgame_cafe.models.entities.GameSession;
 import com.dan.boardgame_cafe.models.entities.GameTable;
 import com.dan.boardgame_cafe.models.entities.Reservation;
 import com.dan.boardgame_cafe.repositories.ReservationRepository;
+import com.dan.boardgame_cafe.services.email.EmailService;
 import com.dan.boardgame_cafe.services.game_table.GameTableService;
 import com.dan.boardgame_cafe.utils.enums.ReservationStatus;
 import com.dan.boardgame_cafe.utils.enums.ReservationType;
@@ -30,15 +31,17 @@ public class ReservationServiceImpl implements ReservationService {
     private final ModelMapper modelMapper;
     private final ReservationValidationService reservationValidationService;
     private final GameTableService gameTableService;
+    private final EmailService emailService;
 
     public ReservationServiceImpl(ReservationRepository reservationRepository,
                                   ModelMapper modelMapper,
                                   ReservationValidationService reservationValidationService,
-                                  GameTableService gameTableService) {
+                                  GameTableService gameTableService, EmailService emailService) {
         this.reservationRepository = reservationRepository;
         this.modelMapper = modelMapper;
         this.reservationValidationService = reservationValidationService;
         this.gameTableService = gameTableService;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -54,6 +57,12 @@ public class ReservationServiceImpl implements ReservationService {
         return modelMapper.map(savedReservation, ReservationDTO.class);
     }
 
+    /**
+     * Creates a Reservation that is tied to a previously created Reservation
+     * @param reservationJoinDTO the new Reservation that joins
+     * @param reservationEventId the existing Reservation that can be joined
+     * @return dto of the joining Reservation
+     */
     @Transactional
     @Override
     public ReservationJoinDTO createReservationJoinEvent(ReservationJoinDTO reservationJoinDTO, Long reservationEventId) {
@@ -96,6 +105,13 @@ public class ReservationServiceImpl implements ReservationService {
         return modelMapper.map(retrieveReservationById(id), ReservationDetailDTO.class);
     }
 
+    /**
+     * Assigns a Table to a Reservation with status PENDING, updating its status to ACCEPTED
+     * sends a confirmation email if Reservation has type CREATE_EVENT
+     * @param reservationId the Reservation that will be updated
+     * @param gameTableId the Table that will be assigned
+     * @return dto with properties updated
+     */
     @Transactional
     @Override
     public ReservationDetailDTO acceptStandardReservation(Long reservationId, Long gameTableId) {
@@ -106,9 +122,25 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setReservationStatus(ReservationStatus.ACCEPTED);
         Reservation savedReservation = reservationRepository.save(reservation);
 
+        if(savedReservation.getReservationType().equals(ReservationType.CREATE_EVENT)){
+            emailService.sendEmailEventCreationAccepted(
+                    reservation.getEmail(),
+                    reservation.getLastName(),
+                    reservation.getReservationDate(),
+                    reservation.getReservationStartTime());
+        }
+
         return modelMapper.map(savedReservation, ReservationDetailDTO.class);
     }
 
+    /**
+     * Adds the joinReservation to a Table based on creatorReservation
+     * @param joinReservationId the PENDING Reservation that wants to join
+     * @param creatorReservationId the ACCEPTED Reservation that dictates the Table
+     * @return dto of the joinReservation
+     */
+
+    @Transactional
     @Override
     public ReservationDetailDTO acceptJoinReservation(Long joinReservationId, Long creatorReservationId) {
         Reservation joinReservation = retrieveReservationById(joinReservationId);
@@ -122,6 +154,12 @@ public class ReservationServiceImpl implements ReservationService {
         return modelMapper.map(savedReservation, ReservationDetailDTO.class);
     }
 
+    /**
+     * Updates the status of the Reservation to SERVICED after a GameSession has been created from it
+     * if the Reservation created an event, all the related Reservations are updated as well
+     * @param reservationId the Reservation that creates the GameSession
+     * @param gameSession the resulting GameSession
+     */
     @Override
     public void updatedReservationAfterGameSessionCreate(Long reservationId, GameSession gameSession) {
         Reservation reservation = retrieveReservationById(reservationId);
@@ -135,19 +173,6 @@ public class ReservationServiceImpl implements ReservationService {
         }
     }
 
-    private void updateAllJoinedReservationsStatus(Reservation reservation, ReservationStatus reservationStatus){
-        reservationRepository.findAllByReservationDateAndReservationStartTimeAndGameTable(
-                reservation.getReservationDate(),
-                reservation.getReservationStartTime(),
-                reservation.getGameTable()
-        )
-                .forEach(foundReservation -> {
-                    foundReservation.setReservationStatus(reservationStatus);
-                    reservationRepository.save(foundReservation);
-                    log.info("Bulk - Reservation id: {} status updated", foundReservation.getId());
-                } );
-    }
-
     @Override
     public Reservation retrieveReservationById(Long id) {
         return reservationRepository.findById(id).orElseThrow(
@@ -159,5 +184,18 @@ public class ReservationServiceImpl implements ReservationService {
         Reservation reservation = retrieveReservationById(reservationId);
         reservationValidationService.validateReservationStatus(reservation.getReservationStatus(), ReservationStatus.ACCEPTED);
         return reservation;
+    }
+
+    private void updateAllJoinedReservationsStatus(Reservation reservation, ReservationStatus reservationStatus){
+        reservationRepository.findAllByReservationDateAndReservationStartTimeAndGameTable(
+                        reservation.getReservationDate(),
+                        reservation.getReservationStartTime(),
+                        reservation.getGameTable()
+                )
+                .forEach(foundReservation -> {
+                    foundReservation.setReservationStatus(reservationStatus);
+                    reservationRepository.save(foundReservation);
+                    log.info("Bulk - Reservation id: {} status updated", foundReservation.getId());
+                } );
     }
 }

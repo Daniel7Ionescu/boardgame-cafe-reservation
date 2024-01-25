@@ -31,7 +31,6 @@ public class GameServiceImpl implements GameService {
     @Override
     public GameDTO createGame(GameDTO gameDTO) {
         gameValidationService.validateUniqueGameName(gameDTO);
-
         Game game = modelMapper.map(gameDTO, Game.class);
         Game savedGame = gameRepository.save(game);
         log.info("Game {} with id: {} saved in database.", savedGame.getGameName(), savedGame.getId());
@@ -52,7 +51,20 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public Game getGameById(Long id) {
-        return gameRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Game with id: " + id + " not found"));
+    public GameDTO getGameById(Long gameId) {
+        return modelMapper.map(retrieveGameById(gameId), GameDTO.class);
+    }
+
+    @Override
+    public void deleteGame(Long gameId) {
+        gameRepository.delete(retrieveGameById(gameId));
+        log.info("Game id: {} removed from DB", gameId);
+    }
+
+    @Override
+    public Game retrieveGameById(Long gameId) {
+        log.info("Game id: {} retrieved from DB", gameId);
+        return gameRepository.findById(gameId).orElseThrow(
+                () -> new ResourceNotFoundException("Game with id: " + gameId + " not found"));
     }
 }

@@ -26,22 +26,22 @@ public class GameSessionController {
 
     @GetMapping
     public ResponseEntity<List<GameSessionDTO>> getFilteredSessions(@RequestParam(required = false) Integer minPlayers,
-                                                               @RequestParam(required = false) LocalDate localDate) {
+                                                                    @RequestParam(required = false) LocalDate localDate) {
         return ResponseEntity.ok(gameSessionService.getFilteredSessions(minPlayers, localDate));
     }
 
     @GetMapping("/{gameSessionId}")
-    public ResponseEntity<GameSessionDetailDTO> getSessionById(@PathVariable Long gameSessionId){
+    public ResponseEntity<GameSessionDetailDTO> getSessionById(@PathVariable Long gameSessionId) {
         return ResponseEntity.ok(gameSessionService.getSessionById(gameSessionId));
     }
 
     @PutMapping("/{gameSessionId}")
-    public ResponseEntity<GameSessionDetailDTO> endGameSession(@PathVariable Long gameSessionId){
+    public ResponseEntity<GameSessionDetailDTO> endGameSession(@PathVariable Long gameSessionId) {
         return ResponseEntity.ok(gameSessionService.endGameSession(gameSessionId));
     }
 
     @PutMapping("/{gameSessionId}/games/{gameId}")
-    public ResponseEntity<GameSessionDetailDTO> addGameToSession(@PathVariable Long gameSessionId, @PathVariable Long gameId){
+    public ResponseEntity<GameSessionDetailDTO> addGameToSession(@PathVariable Long gameSessionId, @PathVariable Long gameId) {
         return ResponseEntity.ok(gameSessionService.addGameToSession(gameSessionId, gameId));
     }
 }
