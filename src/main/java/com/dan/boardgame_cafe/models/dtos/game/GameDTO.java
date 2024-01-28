@@ -15,8 +15,6 @@ import static com.dan.boardgame_cafe.utils.constants.BusinessConstants.VALID_GAM
 @Data
 public class GameDTO {
 
-    private Long id;
-
     @NotBlank(message = "A name is required")
     @Size(min = 3, max = 50, message = "Invalid name length")
     @Pattern(regexp = VALID_GAME_NAME_REGEX, message = "Invalid characters")

@@ -1,14 +1,13 @@
 package com.dan.boardgame_cafe.services.game_session;
 
-import com.dan.boardgame_cafe.exceptions.ResourceHasInvalidStatusOrTypeException;
-import com.dan.boardgame_cafe.exceptions.ResourceNotFoundException;
+import com.dan.boardgame_cafe.exceptions.general.ResourceHasInvalidPropertiesException;
+import com.dan.boardgame_cafe.exceptions.general.ResourceNotFoundException;
 import com.dan.boardgame_cafe.models.dtos.game_session.GameSessionDTO;
 import com.dan.boardgame_cafe.models.dtos.game_session.GameSessionDetailDTO;
 import com.dan.boardgame_cafe.models.entities.Game;
 import com.dan.boardgame_cafe.models.entities.Reservation;
 import com.dan.boardgame_cafe.models.entities.GameSession;
 import com.dan.boardgame_cafe.repositories.GameSessionRepository;
-import com.dan.boardgame_cafe.services.email.EmailService;
 import com.dan.boardgame_cafe.services.game.GameService;
 import com.dan.boardgame_cafe.services.reservation.ReservationService;
 import com.dan.boardgame_cafe.utils.enums.GameSessionStatus;
@@ -47,6 +46,23 @@ public class GameSessionServiceImpl implements GameSessionService {
         this.gameSessionValidationService = gameSessionValidationService;
     }
 
+    /**
+     * Attempts to create a GameSession entity from an existing Reservation
+     * @param reservationId the Reservation with status ACCEPTED
+     * @return dto of the saved GameSession
+     */
+    @Transactional
+    @Override
+    public GameSessionDTO createSessionFromReservation(Long reservationId) {
+        Reservation reservation = reservationService.retrieveReservationByIdForSessionCreation(reservationId);
+        GameSession gameSession = buildSessionFromReservation(reservation);
+        GameSession savedGameSession = gameSessionRepository.save(gameSession);
+        log.info("Session id: {} saved in DB", savedGameSession.getId());
+        reservationService.updatedReservationAfterGameSessionCreate(reservationId, savedGameSession);
+
+        return modelMapper.map(savedGameSession, GameSessionDTO.class);
+    }
+
     @Override
     public List<GameSessionDTO> getFilteredSessions(Integer minPlayers, LocalDate localDate) {
         Specification<GameSession> sessionFilter = Specification
@@ -63,23 +79,6 @@ public class GameSessionServiceImpl implements GameSessionService {
         return modelMapper.map(retrieveGameSessionById(sessionId), GameSessionDetailDTO.class);
     }
 
-    /**
-     * Creates a GameSession entity from an existing Reservation
-     * @param reservationId the Reservation with status ACCEPTED
-     * @return dto of the saved GameSession
-     */
-    @Transactional
-    @Override
-    public GameSessionDTO createSessionFromReservation(Long reservationId) {
-        Reservation reservation = reservationService.retrieveReservationByIdForSessionCreation(reservationId);
-        GameSession gameSession = buildSessionFromReservation(reservation);
-        GameSession savedGameSession = gameSessionRepository.save(gameSession);
-        log.info("Session id: {} saved in DB", savedGameSession.getId());
-        reservationService.updatedReservationAfterGameSessionCreate(reservationId, savedGameSession);
-
-        return modelMapper.map(savedGameSession, GameSessionDTO.class);
-    }
-
     @Transactional
     @Override
     public GameSessionDetailDTO addGameToSession(Long gameSessionId, Long gameId) {
@@ -93,11 +92,13 @@ public class GameSessionServiceImpl implements GameSessionService {
         return modelMapper.map(savedGameSession, GameSessionDetailDTO.class);
     }
 
+    @Transactional
     @Override
     public GameSessionDetailDTO endGameSession(Long gameSessionId) {
         GameSession gameSession = retrieveGameSessionById(gameSessionId);
         if(!gameSession.getGameSessionStatus().equals(GameSessionStatus.ACTIVE)){
-            throw new ResourceHasInvalidStatusOrTypeException("Game Session id: " + gameSession.getId() + " has invalid status");
+            throw new ResourceHasInvalidPropertiesException(
+                    String.format("GameSession id: %d has invalid status", gameSession.getId()));
         }
         gameSession.setGameSessionStatus(GameSessionStatus.ENDED);
         GameSession savedGameSession = gameSessionRepository.save(gameSession);
@@ -122,7 +123,9 @@ public class GameSessionServiceImpl implements GameSessionService {
 
     private GameSession retrieveGameSessionById(Long sessionId){
         return gameSessionRepository.findById(sessionId)
-                .orElseThrow(() -> new ResourceNotFoundException("Session with id: " + sessionId + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("GameSession id: %d not found", sessionId)));
+
     }
 
     private GameSessionType getGameSessionTypeBasedOnReservationType(Reservation reservation){
@@ -131,7 +134,7 @@ public class GameSessionServiceImpl implements GameSessionService {
         } else if (reservation.getReservationType().equals(ReservationType.CREATE_EVENT)) {
             return GameSessionType.EVENT;
         } else {
-            throw new ResourceHasInvalidStatusOrTypeException("Invalid Reservation Type");
+            throw new ResourceHasInvalidPropertiesException("Invalid Reservation Type");
         }
     }
 }

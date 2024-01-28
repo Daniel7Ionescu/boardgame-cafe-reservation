@@ -33,12 +33,6 @@ public class ReservationController {
         return ResponseEntity.ok(reservationService.createReservationJoinEvent(reservationJoinDTO, eventId));
     }
 
-    @PutMapping("/{eventId}/join/{reservationJoinId}")
-    public ResponseEntity<ReservationDetailDTO> acceptJoinReservation(@PathVariable Long eventId,
-                                                                      @PathVariable Long reservationJoinId) {
-        return ResponseEntity.ok(reservationService.acceptJoinReservation(reservationJoinId, eventId));
-    }
-
     @GetMapping
     public ResponseEntity<List<ReservationDTO>> getFilteredReservations(@RequestParam(required = false) String lastName,
                                                                         @RequestParam(required = false) ReservationStatus reservationStatus,
@@ -55,5 +49,16 @@ public class ReservationController {
     public ResponseEntity<ReservationDetailDTO> acceptReservation(@PathVariable Long reservationId,
                                                                   @PathVariable Long gameTableId) {
         return ResponseEntity.ok(reservationService.acceptStandardReservation(reservationId, gameTableId));
+    }
+
+    @PutMapping("/{eventId}/join/{reservationJoinId}")
+    public ResponseEntity<ReservationDetailDTO> acceptJoinReservation(@PathVariable Long eventId,
+                                                                      @PathVariable Long reservationJoinId) {
+        return ResponseEntity.ok(reservationService.acceptJoinReservation(reservationJoinId, eventId));
+    }
+
+    @DeleteMapping("/{reservationId}")
+    public ResponseEntity<String> deleteReservation(@PathVariable Long reservationId) {
+        return ResponseEntity.ok(reservationService.deleteReservation(reservationId));
     }
 }

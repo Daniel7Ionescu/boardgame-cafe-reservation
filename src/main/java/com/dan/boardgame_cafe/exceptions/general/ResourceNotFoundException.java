@@ -1,4 +1,4 @@
-package com.dan.boardgame_cafe.exceptions;
+package com.dan.boardgame_cafe.exceptions.general;
 
 public class ResourceNotFoundException extends RuntimeException {
 

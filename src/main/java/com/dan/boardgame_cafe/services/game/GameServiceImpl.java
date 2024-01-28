@@ -1,6 +1,6 @@
 package com.dan.boardgame_cafe.services.game;
 
-import com.dan.boardgame_cafe.exceptions.ResourceNotFoundException;
+import com.dan.boardgame_cafe.exceptions.general.ResourceNotFoundException;
 import com.dan.boardgame_cafe.models.dtos.game.GameDTO;
 import com.dan.boardgame_cafe.models.entities.Game;
 import com.dan.boardgame_cafe.repositories.GameRepository;
@@ -63,8 +63,7 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public Game retrieveGameById(Long gameId) {
-        log.info("Game id: {} retrieved from DB", gameId);
-        return gameRepository.findById(gameId).orElseThrow(
-                () -> new ResourceNotFoundException("Game with id: " + gameId + " not found"));
+        return gameRepository.findById(gameId)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Game id: %d not found", gameId)));
     }
 }

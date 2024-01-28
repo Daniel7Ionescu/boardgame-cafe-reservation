@@ -16,6 +16,7 @@ public interface ReservationService {
     ReservationJoinDTO createReservationJoinEvent(ReservationJoinDTO reservationJoinDTO, Long creatorReservationId);
     List<ReservationDTO> getFilteredReservations(String lastName, ReservationStatus reservationStatus, LocalDate localDate);
     ReservationDetailDTO getReservationById(Long reservationId);
+    String deleteReservation(Long reservationId);
     void updatedReservationAfterGameSessionCreate(Long reservationId, GameSession gameSession);
     ReservationDetailDTO acceptStandardReservation(Long reservationId, Long gameTableId);
     ReservationDetailDTO acceptJoinReservation(Long joinReservationId, Long creatorReservationId);

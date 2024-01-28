@@ -1,10 +1,11 @@
 package com.dan.boardgame_cafe.services.game_table;
 
-import com.dan.boardgame_cafe.exceptions.reservation.ReservationPartySizeOverTableCapacityException;
-import com.dan.boardgame_cafe.exceptions.reservation.ReservationTimeOverlapsWithExistingSessionException;
-import com.dan.boardgame_cafe.models.entities.GameSession;
+import com.dan.boardgame_cafe.exceptions.general.DuplicateResourceException;
+import com.dan.boardgame_cafe.exceptions.general.ResourceInvalidUsageException;
+import com.dan.boardgame_cafe.models.dtos.game_table.GameTableCreateDTO;
 import com.dan.boardgame_cafe.models.entities.GameTable;
 import com.dan.boardgame_cafe.models.entities.Reservation;
+import com.dan.boardgame_cafe.repositories.GameTableRepository;
 import com.dan.boardgame_cafe.utils.enums.ReservationStatus;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +14,25 @@ import java.time.LocalTime;
 @Service
 public class GameTableValidationServiceImpl implements GameTableValidationService {
 
+    private final GameTableRepository gameTableRepository;
+
+    public GameTableValidationServiceImpl(GameTableRepository gameTableRepository) {
+        this.gameTableRepository = gameTableRepository;
+    }
+
+    @Override
+    public void validateGameTable(GameTableCreateDTO gameTableCreateDTO) {
+        long result = gameTableRepository.countByGameTableName(gameTableCreateDTO.getGameTableName());
+        if (result > 0) {
+            throw new DuplicateResourceException(
+                    String.format("A table with name %s already exists.", gameTableCreateDTO.getGameTableName()));
+        }
+    }
+
     @Override
     public void validateGameTableCanAccommodateReservation(GameTable gameTable, Reservation inputRes) {
-        if(inputRes.getPartySize() > gameTable.getTableCapacity()){
-            throw new ReservationPartySizeOverTableCapacityException("Table capacity cannot accommodate");
+        if (inputRes.getPartySize() > gameTable.getTableCapacity()) {
+            throw new ResourceInvalidUsageException("Table capacity cannot accommodate");
         }
 
         long result = gameTable.getReservations().stream()
@@ -31,7 +47,7 @@ public class GameTableValidationServiceImpl implements GameTableValidationServic
                 .count();
 
         if (result > 0) {
-            throw new ReservationTimeOverlapsWithExistingSessionException("Resulting Session will overlap");
+            throw new ResourceInvalidUsageException("Resulting GameSession time will overlap with existing GameSession");
         }
     }
 
@@ -40,7 +56,5 @@ public class GameTableValidationServiceImpl implements GameTableValidationServic
                                    LocalTime inputStart,
                                    LocalTime inputEnd) {
         return sourceStart.isBefore(inputEnd) && inputStart.isBefore(sourceEnd);
-
     }
-
 }
