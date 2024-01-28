@@ -1,6 +1,7 @@
 package com.dan.boardgame_cafe.controllers;
 
 import com.dan.boardgame_cafe.models.dtos.game_table.GameTableCreateDTO;
+import com.dan.boardgame_cafe.models.dtos.game_table.GameTableDetailDTO;
 import com.dan.boardgame_cafe.services.game_table.GameTableService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -28,5 +29,10 @@ public class GameTableController {
     @GetMapping
     public ResponseEntity<List<GameTableCreateDTO>> getAllGameTables(){
         return ResponseEntity.ok(gameTableService.getAllGameTables());
+    }
+
+    @GetMapping("/{gameTableId}")
+    public ResponseEntity<GameTableDetailDTO> getGameTableById(@PathVariable Long gameTableId){
+        return ResponseEntity.ok(gameTableService.getGameTableById(gameTableId));
     }
 }

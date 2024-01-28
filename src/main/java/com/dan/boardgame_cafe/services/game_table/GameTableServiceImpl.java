@@ -1,12 +1,11 @@
 package com.dan.boardgame_cafe.services.game_table;
 
-import com.dan.boardgame_cafe.exceptions.ResourceNotFoundException;
+import com.dan.boardgame_cafe.exceptions.general.ResourceNotFoundException;
 import com.dan.boardgame_cafe.models.dtos.game_table.GameTableCreateDTO;
 import com.dan.boardgame_cafe.models.dtos.game_table.GameTableDetailDTO;
 import com.dan.boardgame_cafe.models.entities.GameTable;
 import com.dan.boardgame_cafe.models.entities.Reservation;
 import com.dan.boardgame_cafe.repositories.GameTableRepository;
-import com.dan.boardgame_cafe.services.reservation.ReservationService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -29,7 +28,7 @@ public class GameTableServiceImpl implements GameTableService {
 
     @Override
     public GameTableCreateDTO createGameTable(GameTableCreateDTO gameTableCreateDTO) {
-        //validate dto
+        gameTableValidationService.validateGameTable(gameTableCreateDTO);
         GameTable savedGameTable = gameTableRepository.save(modelMapper.map(gameTableCreateDTO, GameTable.class));
 
         return modelMapper.map(savedGameTable, GameTableCreateDTO.class);
@@ -40,6 +39,11 @@ public class GameTableServiceImpl implements GameTableService {
         return gameTableRepository.findAll().stream()
                 .map(gameTable -> modelMapper.map(gameTable, GameTableCreateDTO.class))
                 .toList();
+    }
+
+    @Override
+    public GameTableDetailDTO getGameTableById(Long gameTableId) {
+        return modelMapper.map(retrieveGameTableById(gameTableId), GameTableDetailDTO.class);
     }
 
     @Override
@@ -63,6 +67,6 @@ public class GameTableServiceImpl implements GameTableService {
     @Override
     public GameTable retrieveGameTableById(Long gameTableId) {
         return gameTableRepository.findById(gameTableId)
-                .orElseThrow(() -> new ResourceNotFoundException("Game table id:" + gameTableId + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Game table id: %d not found", gameTableId)));
     }
 }

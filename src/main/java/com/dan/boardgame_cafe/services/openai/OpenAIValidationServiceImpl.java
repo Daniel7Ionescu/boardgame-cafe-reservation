@@ -1,4 +1,4 @@
-package com.dan.boardgame_cafe.services.chat_gpt;
+package com.dan.boardgame_cafe.services.openai;
 
 import com.dan.boardgame_cafe.exceptions.openai.InvalidUserPromptException;
 import lombok.extern.slf4j.Slf4j;
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class ChatGPTValidationServiceImpl implements ChatGPTValidationService{
+public class OpenAIValidationServiceImpl implements OpenAIValidationService {
     @Override
     public void validateUserPrompt(String prompt) {
         if(prompt.isBlank()){

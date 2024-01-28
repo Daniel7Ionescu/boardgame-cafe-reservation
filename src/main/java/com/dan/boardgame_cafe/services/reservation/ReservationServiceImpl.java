@@ -1,6 +1,6 @@
 package com.dan.boardgame_cafe.services.reservation;
 
-import com.dan.boardgame_cafe.exceptions.ResourceNotFoundException;
+import com.dan.boardgame_cafe.exceptions.general.ResourceNotFoundException;
 import com.dan.boardgame_cafe.models.dtos.reservation.ReservationDTO;
 import com.dan.boardgame_cafe.models.dtos.reservation.ReservationDetailDTO;
 import com.dan.boardgame_cafe.models.dtos.reservation.ReservationJoinDTO;
@@ -105,6 +105,14 @@ public class ReservationServiceImpl implements ReservationService {
         return modelMapper.map(retrieveReservationById(id), ReservationDetailDTO.class);
     }
 
+    @Override
+    public String deleteReservation(Long reservationId) {
+        reservationRepository.delete(retrieveReservationById(reservationId));
+        log.info("Reservation id: {} removed from DB", reservationId);
+
+        return String.format("Reservation id: %d removed from DB", reservationId);
+    }
+
     /**
      * Assigns a Table to a Reservation with status PENDING, updating its status to ACCEPTED
      * sends a confirmation email if Reservation has type CREATE_EVENT
@@ -139,7 +147,6 @@ public class ReservationServiceImpl implements ReservationService {
      * @param creatorReservationId the ACCEPTED Reservation that dictates the Table
      * @return dto of the joinReservation
      */
-
     @Transactional
     @Override
     public ReservationDetailDTO acceptJoinReservation(Long joinReservationId, Long creatorReservationId) {
@@ -169,14 +176,14 @@ public class ReservationServiceImpl implements ReservationService {
         log.info("Reservation id: {} status updated to {} and saved in DB", savedReservation.getId(), savedReservation.getReservationStatus());
 
         if(reservation.getReservationType().equals(ReservationType.CREATE_EVENT)){
-            updateAllJoinedReservationsStatus(reservation, ReservationStatus.SERVICED);
+            updateAllJoinedReservationsStatus(reservation);
         }
     }
 
     @Override
-    public Reservation retrieveReservationById(Long id) {
-        return reservationRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Reservation with id: " + id + " not found"));
+    public Reservation retrieveReservationById(Long reservationId) {
+        return reservationRepository.findById(reservationId).orElseThrow(
+                () -> new ResourceNotFoundException(String.format("Reservation id: %d not found", reservationId)));
     }
 
     @Override
@@ -186,14 +193,14 @@ public class ReservationServiceImpl implements ReservationService {
         return reservation;
     }
 
-    private void updateAllJoinedReservationsStatus(Reservation reservation, ReservationStatus reservationStatus){
+    private void updateAllJoinedReservationsStatus(Reservation reservation){
         reservationRepository.findAllByReservationDateAndReservationStartTimeAndGameTable(
                         reservation.getReservationDate(),
                         reservation.getReservationStartTime(),
                         reservation.getGameTable()
                 )
                 .forEach(foundReservation -> {
-                    foundReservation.setReservationStatus(reservationStatus);
+                    foundReservation.setReservationStatus(reservation.getReservationStatus());
                     reservationRepository.save(foundReservation);
                     log.info("Bulk - Reservation id: {} status updated", foundReservation.getId());
                 } );

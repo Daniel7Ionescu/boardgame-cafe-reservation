@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface GameTableRepository extends JpaRepository<GameTable, Long> {
+
+    long countByGameTableName(String name);
 }

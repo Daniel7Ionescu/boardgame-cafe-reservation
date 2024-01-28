@@ -27,7 +27,7 @@ public class EmailServiceImpl implements EmailService{
         message.setText(
                 "Congratulations "
                 + name
-                + ", your event for" + date
+                + ", your event for " + date
                 + ", is set to start at: " + time + " !"
         );
 

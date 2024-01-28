@@ -47,6 +47,7 @@ public class ReservationDTO {
     private ReservationType reservationType;
 
     @NotNull
-    @Min(value = 1, message = "at least 1 party member is required")
+    @Min(value = 1, message = "At least 1 party member is required")
+    @Max(value = 9, message = "Party members limit exceeded")
     private Integer partySize;
 }

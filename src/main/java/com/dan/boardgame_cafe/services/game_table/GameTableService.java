@@ -11,6 +11,7 @@ public interface GameTableService {
 
     GameTableCreateDTO createGameTable(GameTableCreateDTO gameTableCreateDTO);
     List<GameTableCreateDTO> getAllGameTables();
+    GameTableDetailDTO getGameTableById(Long gameTableId);
     GameTableDetailDTO addReservationToGameTable(Long gameTableId, Reservation reservation);
     GameTable retrieveGameTableById(Long gameTableId);
     GameTable retrieveGameTableThatCanAccommodateReservation(Long gameTableId, Reservation reservation);

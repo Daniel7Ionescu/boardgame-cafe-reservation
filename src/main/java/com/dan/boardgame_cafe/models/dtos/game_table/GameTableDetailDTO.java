@@ -7,10 +7,8 @@ import java.util.List;
 
 
 @Data
-public class GameTableDetailDTO {
+public class GameTableDetailDTO extends GameTableCreateDTO{
 
     private Long id;
-    private String gameTableName;
-    private Integer tableCapacity;
     private List<Reservation> reservations;
 }
