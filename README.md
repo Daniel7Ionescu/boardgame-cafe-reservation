@@ -5,6 +5,8 @@ A Spring Boot web app serving APIs for a reservation system for board game café
 - a Reservation can be created for a certain date and a number of people
 - if the cafe can accomodate it, then a Session is created
 - the cafe can also create sessions that are special events, they can be joined via Reservation
+- Email notification on reservation acceptance
+- openai: users can ask chatGPT regarding board games recommendations
 
 ---
 ### Info
