@@ -38,7 +38,7 @@ public class GameController {
         return ResponseEntity.ok(gameService.getGameById(gameId));
     }
 
-    @DeleteMapping("/delete/{gameId}")
+    @DeleteMapping("/{gameId}/delete")
     public ResponseEntity<String> deleteGame(@PathVariable Long gameId) {
         gameService.deleteGame(gameId);
         return ResponseEntity.ok("Game id: " + gameId + " deleted");
