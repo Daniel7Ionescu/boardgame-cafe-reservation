@@ -1,7 +1,6 @@
 package com.dan.boardgame_cafe.controllers;
 
 import com.dan.boardgame_cafe.models.dtos.game.GameDTO;
-import com.dan.boardgame_cafe.models.dtos.game.GameDetailDTO;
 import com.dan.boardgame_cafe.services.game.GameService;
 import com.dan.boardgame_cafe.utils.enums.GameCategory;
 import jakarta.validation.Valid;
@@ -23,19 +22,19 @@ public class GameController {
     }
 
     @PostMapping
-    public ResponseEntity<GameDetailDTO> createGame(@RequestBody @Valid GameDTO gameDTO) {
+    public ResponseEntity<GameDTO> createGame(@RequestBody @Valid GameDTO gameDTO) {
         return ResponseEntity.ok(gameService.createGame(gameDTO));
     }
 
     @GetMapping
-    public ResponseEntity<List<GameDetailDTO>> geFilteredGames(@RequestParam(required = false) String inputName,
-                                                               @RequestParam(required = false) GameCategory gameCategory,
-                                                               @RequestParam(required = false) Integer minPlayers) {
+    public ResponseEntity<List<GameDTO>> geFilteredGames(@RequestParam(required = false) String inputName,
+                                                         @RequestParam(required = false) GameCategory gameCategory,
+                                                         @RequestParam(required = false) Integer minPlayers) {
         return ResponseEntity.ok(gameService.getFilteredGames(inputName, gameCategory, minPlayers));
     }
 
     @GetMapping("/{gameId}")
-    public ResponseEntity<GameDetailDTO> getGameById(@PathVariable Long gameId) {
+    public ResponseEntity<GameDTO> getGameById(@PathVariable Long gameId) {
         return ResponseEntity.ok(gameService.getGameById(gameId));
     }
 
