@@ -89,10 +89,14 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public List<ReservationDTO> getFilteredReservations(String lastName, ReservationStatus reservationStatus, LocalDate localDate) {
+    public List<ReservationDTO> getFilteredReservations(String lastName,
+                                                        ReservationStatus reservationStatus,
+                                                        ReservationType reservationType,
+                                                        LocalDate localDate) {
         Specification<Reservation> resFilter = Specification
                 .where(lastName == null ? null : lastNameLike(lastName))
                 .and(reservationStatus == null ? null : hasReservationStatus(reservationStatus))
+                .and(reservationType == null ? null : hasReservationType(reservationType))
                 .and(localDate == null ? null : reservationOnDate(localDate));
 
         return reservationRepository.findAll(resFilter).stream()
@@ -160,6 +164,18 @@ public class ReservationServiceImpl implements ReservationService {
 
         return modelMapper.map(savedReservation, ReservationDetailDTO.class);
     }
+    @Transactional
+    @Override
+    public ReservationDTO rejectReservation(Long reservationId){
+        Reservation reservation = retrieveReservationById(reservationId);
+        reservationValidationService.validateReservationStatus(reservation.getReservationStatus(), ReservationStatus.PENDING);
+        reservation.setReservationStatus(ReservationStatus.REJECTED);
+        Reservation savedReservation = reservationRepository.save(reservation);
+        log.info("Reservation id: {} rejected", reservationId);
+
+        return modelMapper.map(savedReservation, ReservationDTO.class);
+    }
+
 
     /**
      * Updates the status of the Reservation to SERVICED after a GameSession has been created from it
