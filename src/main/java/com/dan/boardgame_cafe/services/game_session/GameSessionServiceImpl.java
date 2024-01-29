@@ -53,14 +53,14 @@ public class GameSessionServiceImpl implements GameSessionService {
      */
     @Transactional
     @Override
-    public GameSessionDTO createSessionFromReservation(Long reservationId) {
+    public GameSessionDetailDTO createSessionFromReservation(Long reservationId) {
         Reservation reservation = reservationService.retrieveReservationByIdForSessionCreation(reservationId);
         GameSession gameSession = buildSessionFromReservation(reservation);
         GameSession savedGameSession = gameSessionRepository.save(gameSession);
         log.info("Session id: {} saved in DB", savedGameSession.getId());
         reservationService.updatedReservationAfterGameSessionCreate(reservationId, savedGameSession);
 
-        return modelMapper.map(savedGameSession, GameSessionDTO.class);
+        return modelMapper.map(savedGameSession, GameSessionDetailDTO.class);
     }
 
     @Override

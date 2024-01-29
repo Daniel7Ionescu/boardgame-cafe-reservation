@@ -12,6 +12,8 @@ import java.time.LocalTime;
 @Data
 public class GameSessionDTO {
 
+    private Long id;
+
     @NotBlank(message = "Session date is required")
     private LocalDate sessionDate;
 

@@ -46,6 +46,8 @@ public class ReservationDTO {
     @NotNull(message = "Reservation type is required")
     private ReservationType reservationType;
 
+    private ReservationStatus reservationStatus;
+
     @NotNull
     @Min(value = 1, message = "At least 1 party member is required")
     @Max(value = 9, message = "Party members limit exceeded")

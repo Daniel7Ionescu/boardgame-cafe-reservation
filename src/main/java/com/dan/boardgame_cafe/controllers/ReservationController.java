@@ -5,6 +5,7 @@ import com.dan.boardgame_cafe.models.dtos.reservation.ReservationDetailDTO;
 import com.dan.boardgame_cafe.models.dtos.reservation.ReservationJoinDTO;
 import com.dan.boardgame_cafe.services.reservation.ReservationService;
 import com.dan.boardgame_cafe.utils.enums.ReservationStatus;
+import com.dan.boardgame_cafe.utils.enums.ReservationType;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,8 +37,9 @@ public class ReservationController {
     @GetMapping
     public ResponseEntity<List<ReservationDTO>> getFilteredReservations(@RequestParam(required = false) String lastName,
                                                                         @RequestParam(required = false) ReservationStatus reservationStatus,
+                                                                        @RequestParam(required = false) ReservationType reservationType,
                                                                         @RequestParam(required = false) LocalDate localDate) {
-        return ResponseEntity.ok(reservationService.getFilteredReservations(lastName, reservationStatus, localDate));
+        return ResponseEntity.ok(reservationService.getFilteredReservations(lastName, reservationStatus, reservationType, localDate));
     }
 
     @GetMapping("/{reservationId}")
@@ -51,10 +53,10 @@ public class ReservationController {
         return ResponseEntity.ok(reservationService.acceptStandardReservation(reservationId, gameTableId));
     }
 
-    @PutMapping("/{eventId}/join/{reservationJoinId}")
-    public ResponseEntity<ReservationDetailDTO> acceptJoinReservation(@PathVariable Long eventId,
+    @PutMapping("/{reservationId}/join/{reservationJoinId}")
+    public ResponseEntity<ReservationDetailDTO> acceptJoinReservation(@PathVariable Long reservationId,
                                                                       @PathVariable Long reservationJoinId) {
-        return ResponseEntity.ok(reservationService.acceptJoinReservation(reservationJoinId, eventId));
+        return ResponseEntity.ok(reservationService.acceptJoinReservation(reservationJoinId, reservationId));
     }
 
     @DeleteMapping("/{reservationId}")
